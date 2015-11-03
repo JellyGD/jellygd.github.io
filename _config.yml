@@ -1,5 +1,5 @@
 # Site settings
-title: "Jelly"
+title: "Jelly Blog"
 email: 651247149@qq.com
 description: "我的博客"
 baseurl: ""
@@ -13,8 +13,8 @@ addthis_id: ra-513c6fa83da6ec67
 post_limit: 5
 
 # Social usernames/URLs
-twitter_username: _jacobtomlinson
-github_username:  jacobtomlinson
+twitter_username: 
+github_username:  jellygd
 linkedin_link: http://carte-noire.jacobtomlinson.co.uk/
 google_plus_link: http://carte-noire.jacobtomlinson.co.uk/
 stackoverflow_link: http://carte-noire.jacobtomlinson.co.uk/
