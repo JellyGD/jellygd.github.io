@@ -4,7 +4,7 @@ email: 651247149@qq.com
 description: "我的博客"
 baseurl: ""
 url: "http://carte-noire.jacobtomlinson.co.uk/"
-title_description: "2010年到现在已经5年了，也要总结下自己的所得，时间过的太快了，项目也做了不少，可是缺少累计，进步一直不大..."
+title_description: "2010年到现在已经5年了，也要总结下自己的所得，时间过的太快了，项目也做了不少，可是缺少累计，进步一直不大... \n 一直经历的太多"
 title_image: "https://github.com/JellyGD/jellygd.github.io/blob/master/title.jpg?raw=true"
 google_analytics: ""
 disqus_account: cartenoire
@@ -14,9 +14,9 @@ post_limit: 5
 
 # Social usernames/URLs
 github_username:  jellygd
-linkedin_link: http://carte-noire.jacobtomlinson.co.uk/
-google_plus_link: http://carte-noire.jacobtomlinson.co.uk/
-stackoverflow_link: http://carte-noire.jacobtomlinson.co.uk/
+linkedin_link: https://github.com/jellygd
+google_plus_link: jelly130520@gmail.com
+stackoverflow_link: https://github.com/jellygd
 
 # Footer
 # footer_left: "Made with <i class=\"fa fa-heart\"></i> by <a href=\"https://twitter.com/_JacobTomlinson\">Jacob Tomlinson</a>"
