@@ -1,4 +1,6 @@
 #  RunLoop
+RunLoop跟内存之间的关系，在ARC的场景下，是依赖Autorelease来管理对象的释放的。 
+Autorelease是由多个AutoreleasePage组成。每一个Page的大小都是4096字节，然后用双链表的方式连接在一起。
 
 在没有手动干预AutoreleasePool的情况下，Autorelease对象是在当前的RunLoop迭代结束是释放的
 而它能够释放的原因是系统在每个RunLoop迭代中都加入了自动释放池Push 和Pop.
