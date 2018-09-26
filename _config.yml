@@ -4,8 +4,8 @@
 # ---------------------------------------------------------------
 
 # Site
-title: JellGD
-subtitle:
+title: JellyGD
+subtitle: 好奇心强，喜欢新鲜事物，爱吃爱玩爱健身。
 description:
 author: 张国东
 # Support language: de, en, fr-FR, id, ja, ko, pt-BR, pt, ru, zh-Hans, zh-hk, zh-tw
@@ -19,7 +19,7 @@ baseurl:
 permalink: pretty
 
 # Pagination
-paginate: 10
+paginate: 5
 #paginate_path: "/page:num/"
 #archive:
   #paginate: 10
@@ -66,7 +66,7 @@ feed:
 ## Docs: https://help.github.com/articles/configuring-jekyll-plugins/
 plugins:
 # jemoji conficts with toc in some no-ascii post
-# - jemoji
+ - jemoji
  - jekyll-sitemap
  - jekyll-feed
 
@@ -78,7 +78,7 @@ plugins:
 favicon: /assets/favicon.ico
 
 # Set default keywords (Use a comma to separate)
-keywords: "Jekyll, NexT"
+keywords: "Objective-C,iOS,jellyGD"
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.

@@ -1,0 +1,40 @@
+#  RunLoop
+
+在没有手动干预AutoreleasePool的情况下，Autorelease对象是在当前的RunLoop迭代结束是释放的
+而它能够释放的原因是系统在每个RunLoop迭代中都加入了自动释放池Push 和Pop.
+
+```
+__weak id obj;
+-(void)viewDidLoad{
+    NSString *test = [NSString stringWithFormat:@"runLoop test"];
+    obj = test;
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    NSLog(@"%s === %@",__func__,obj);
+    
+    NSLog(@"current runLoop = %@",[NSRunLoop currentRunLoop]);
+}
+
+- (void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    NSLog(@"%s === %@",__func__,obj);
+}
+
+```
+根据以上测试代码，得出输出结果：
+
+```
+-[DemoBaseViewController viewWillAppear:] === runLoop test
+-[DemoBaseViewController viewDidAppear:] === (null)
+```
+
+在`viewWillAppear `的时候 obj 还存在， 在`viewDidAppear `的时候，obj就已经被系统废弃。
+
+从而得出结论是：
+
+>释放时机是基于`runloop`而不是作用域；
+>
+>通过autorelease pool手动干预释放；循环多次时当心要对autorelease进行优化,否则会造成内存紧张。
+
