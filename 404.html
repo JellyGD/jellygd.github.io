@@ -1,48 +1,43 @@
 ---
-layout: default
-title: 404
 permalink: /404.html
 ---
 
-<div class="container-fluid index error">
-  <div class="row">
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-    <div class="col-md-12 content-panel articles">
-      <h1 class="header author-header">404</h1>
+  <meta charset="UTF-8">
 
-      <div class="error-text">
-        Sorry but this page doesn't seem to exist.
-      </div>
+  <title>Page not found</title>
 
-      <div class="error-text">
-        <a href="{{ site.baseurl }}/">Home</a> |
-        <a href="{{ site.baseurl }}/posts/">All Posts</a> |
-        <a href="{{ site.baseurl }}/search/">Search</a>
-      </div>
+  {% include head.html %}
 
-      {% include social_links.html %}
+  <link rel="stylesheet" href="{{ 'assets/css/404.css' | relative_url }}" media="all">
 
-    </div>
+</head>
+<body>
 
-  </div>
+  <main class="pnf-wrapper">
 
-  <div class="content-panel related">
-    {% for post in site.posts limit:1 %}
-      <div class="related-header">
-        <a href="{{ site.baseurl }}{{ post.url }}">Suggested Article</a>
-      </div>
-      <div class="title">
-        <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
-      </div>
-      <div class="excerpt">
-         {% if post.summary %}
-          {{ post.summary | strip_html | truncatewords:30 }}
-         {% else %}
-          {{ post.excerpt | strip_html | truncatewords:30 }}
-         {% endif %}
-        <a href="{{ site.baseurl }}{{ post.url }}">Continue Reading</a>
-      </div>
-    {% endfor %}
-  </div>
+    <section class="tangram">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path style="fill: #5862e4" d="M0 0 L0 300 L150 150 Z" />
+        <path style="fill: #d67756" d="M0 0 L300 0 L150 150 Z" />
+        <path style="fill: #973a34" d="M0 300 L150 300 L75 225 Z" />
+        <path style="fill: #c93a8a" d="M150 300 L75 225 L150 150 L225 225 Z" />
+        <path style="fill: #494c8f" d="M150 150 L225 75 L225 225 Z" />
+        <path style="fill: #80ac53" d="M225 75 L300 0 L300 150 L225 225 Z" />
+        <path style="fill: #ffef54" d="M150 300 L300 150 L300 300 Z" />
+      </svg>
+    </section>
 
-</div>
+    <section class="description">
+      <p>Oops, this page doesn't exist. Go <a href="{{ '/' | relative_url }}">somewhere</a> else? :)</p>
+    </section>
+
+    {% include footer.html %}
+
+  </main>
+
+</body>
+</html>

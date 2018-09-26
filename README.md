@@ -1,56 +1,78 @@
-# Carte Noire
+![](https://raw.githubusercontent.com/kkninjae/book/master/github/hero.png)
 
-A simple Jekyll theme for blogging. Not named after the coffee.
 
-![Homepage](http://i.imgur.com/xlmHArV.png)
+# Book
 
-### Article
-![Article](http://i.imgur.com/8rD8FfC.png)
+Book, a simple and ready-to-use Jekyll theme. [Live](http://kkninjae.github.io/book/).
 
-### Disqus Comments
-![Comments](http://i.imgur.com/TBZHQwF.png)
 
-### Posts grouped by year
-![All Posts](http://i.imgur.com/9bNs2Sc.png)
+## How-to
 
-### JavaScript Search
-![Search](http://i.imgur.com/yQqMeSl.png)
+*   [Setup](#setup)
+*   [Customization](#customization)
+*   [Writing Posts](#writing-posts)
+*   [Deploy to Github Page](#deploy-to-gh-pages)
 
-### Menu by mmenu
-![Menu](http://i.imgur.com/SClrNSH.png)
 
-## Contact
-If you wish to contact me regarding this theme please raise an issue on GitHub,
-tweet me [@_jacobtomlinson](http://www.twitter.com/_jacobtomlinson) or email me
-[jacob@jacobtomlinson.co.uk](mailto:jacob@jacobtomlinson.co.uk).
+### <a name="setup" id>Setup</a>
 
-## Contribution
-Pull requests are very welcome.
+```sh
+# get a copy of book source code
+$ git clone https://github.com/kkninjae/book.git
 
-## Theme
-This jekyll theme has been created from scratch. Ideas and inspiration are taken
-from other places but the code is my own.
+# running site locally
+$ jekyll serve -w
 
-## Tools and Libraries
-The following tools and libraries are used in this theme
+# from now, you should be able to start development or customization
+```
 
-### JavaScript
- * [jQuery](http://jquery.com/)
- * [MMenu](http://mmenu.frebsite.nl/)
- * [HighlightJS](https://highlightjs.org/)
- * [Simple Jekyll Search](https://github.com/christian-fei/Simple-Jekyll-Search)
 
-### CSS
- * [Bootstrap](http://getbootstrap.com/)
- * [Font Awesome](http://fortawesome.github.io/Font-Awesome/)
+### <a name="customization">Customization</a>
 
-### Social
- * [AddThis](http://www.addthis.com/)
- * [Disqus](https://disqus.com/)
+Book is designed as simple as possible, but few changes can make your site uniq.
+You only need to change the values of keys in `_config.yml` file.
 
-### Other
- * [Real Favicon Generator](http://realfavicongenerator.net/)
- * [Google Analytics](http://www.google.com/analytics/)
+*   Change site path: `baseurl`
+*   Give your site a name: `title`
+*   Make a site favicon: `favicon`
+*   Make a special home button image: `avatar`
 
-## License
-The jekyll theme, HTML, CSS and JavaScript is licensed under GPLv3 (unless stated otherwise in the file).
+
+Last but not least
+
+*   If you are using Google analytics: `ga`
+*   If you are using Disqus commenting system: `disqus`
+
+
+### <a name="writing-posts">Writing Posts</a>
+
+Make a markdown file in `_posts` directory,
+follow [Jekyll post naming convention](https://jekyllrb.com/docs/posts/) to name your post,
+and put following front matter to the top of your post.
+You should be able to start to write your awesome post.
+Read this [POST](https://kkninjae.github.io/book/2015/08/28/how-to-use-book.html) to know more tips.
+
+```markdown
+---
+title: Your awesome post title
+date: YYYY-MM-DD
+---
+```
+
+
+### <a name="deploy-to-gh-pages">Deploy to Github Page</a>
+
+There is a deploying script built out of box.
+You need to install one more tool before using it which is [npm](https://www.npmjs.com/get-npm).
+This script will push your current static site to `gh-pages` branch.
+If there is no `gh-pages` branch yet, the script will create it for you.
+
+```sh
+# start to deploy your site to Github pages
+$ npm run deploy
+```
+
+
+## End.
+
+If you like this theme, why not give it a star. :)
