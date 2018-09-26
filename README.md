@@ -1,78 +1,35 @@
-![](https://raw.githubusercontent.com/kkninjae/book/master/github/hero.png)
+# NexT
+
+> 精于心，简于形
+
+NexT 是由 [Hexo NexT](https://github.com/iissnan/hexo-theme-next) 移植而来的 Jekyll 主题。<!--commit: f951075d9b739d26b42472431995fa68d08796aa-->
+
+<a href="http://simpleyyt.github.io/jekyll-theme-next/" target="_blank">在线预览 Preview</a> | <a href="http://simpleyyt.com" target="_blank">Yitao's Blog</a> | <a href="http://theme-next.simpleyyt.com" target="_blank">NexT 使用文档</a> |  [English Documentation](README.en.md)
+
+[![Join the chat at https://gitter.im/simpleyyt/jekyll-theme-next](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jekyll-theme-next/lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+![NexT Schemes](http://iissnan.com/nexus/next/next-schemes.jpg)
 
 
-# Book
+## 浏览器支持 Browser support
 
-Book, a simple and ready-to-use Jekyll theme. [Live](http://kkninjae.github.io/book/).
-
-
-## How-to
-
-*   [Setup](#setup)
-*   [Customization](#customization)
-*   [Writing Posts](#writing-posts)
-*   [Deploy to Github Page](#deploy-to-gh-pages)
+![Browser support](http://iissnan.com/nexus/next/browser-support.png)
 
 
-### <a name="setup" id>Setup</a>
+## 贡献 Contributing
 
-```sh
-# get a copy of book source code
-$ git clone https://github.com/kkninjae/book.git
-
-# running site locally
-$ jekyll serve -w
-
-# from now, you should be able to start development or customization
-```
+欢迎提交问题与需求，修复代码。
 
 
-### <a name="customization">Customization</a>
+## 开发 Development
 
-Book is designed as simple as possible, but few changes can make your site uniq.
-You only need to change the values of keys in `_config.yml` file.
+NexT 主旨在于简洁优雅且易于使用，所以首先要尽量确保 NexT 的简洁易用性。
 
-*   Change site path: `baseurl`
-*   Give your site a name: `title`
-*   Make a site favicon: `favicon`
-*   Make a special home button image: `avatar`
+NexT is built for easily use with elegant appearance. First things first, always keep things simple.
 
 
-Last but not least
+## 捐赠
 
-*   If you are using Google analytics: `ga`
-*   If you are using Disqus commenting system: `disqus`
+支付宝捐赠链接还是要有的，万一真的有人捐呢。
 
-
-### <a name="writing-posts">Writing Posts</a>
-
-Make a markdown file in `_posts` directory,
-follow [Jekyll post naming convention](https://jekyllrb.com/docs/posts/) to name your post,
-and put following front matter to the top of your post.
-You should be able to start to write your awesome post.
-Read this [POST](https://kkninjae.github.io/book/2015/08/28/how-to-use-book.html) to know more tips.
-
-```markdown
----
-title: Your awesome post title
-date: YYYY-MM-DD
----
-```
-
-
-### <a name="deploy-to-gh-pages">Deploy to Github Page</a>
-
-There is a deploying script built out of box.
-You need to install one more tool before using it which is [npm](https://www.npmjs.com/get-npm).
-This script will push your current static site to `gh-pages` branch.
-If there is no `gh-pages` branch yet, the script will create it for you.
-
-```sh
-# start to deploy your site to Github pages
-$ npm run deploy
-```
-
-
-## End.
-
-If you like this theme, why not give it a star. :)
+![支付宝扫码捐赠](http://p1.bpimg.com/567571/9a4a158daee8aa69.png)
