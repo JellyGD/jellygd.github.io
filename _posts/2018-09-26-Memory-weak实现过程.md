@@ -54,7 +54,7 @@ weak修饰的对象，在对象释放的时候会自动变成nil，会调用接�
 	5、然后调用objc_clear_deallocating();
 	6、调用objc_storeWeak(&objc1); 将weak弱引用对象变成nil。
     
-### 扩展阅读 Association通过分类添加的对象是什么时候释放的？ 	
-	
-	
+### 扩展阅读 Association通过分类添加的对象是什么时候释放的？ 
 
+
+### 扩展阅读 Weak修饰的弱引用对象是不是线程安全的？
