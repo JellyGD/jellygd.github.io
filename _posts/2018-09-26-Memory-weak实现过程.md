@@ -25,12 +25,12 @@ _weak obj1 = obj;
 ```
 在创建weak弱引用对象的时候步骤如下：
 
-	1、调用objc_initWeak() 创建Weak表，Weak表存储着弱引用对象的地址和对象地址。（对象地址为key，弱应用对象地址为Value）;
+	1、通过runtime调用objc_initWeak() 创建Weak表，Weak表存储着弱引用对象的地址和对象地址。（对象地址为key，弱应用对象地址为Value）;
 	2、weak表 是一个二维数组，Key是所指对象的地址，Value是weak指针的地址（这个地址的值是所指对象的地址）数组。
 	3、调用objc_storeWeak(&obj1,obj);
 	
 ## weak修饰的对象，在读取的时候做了什么？
-在使用weak对象的时候，是通过滴啊用objc_loadWeakRetained方法来获取的。
+在使用weak对象的时候，是通过调用objc_loadWeakRetained方法来获取的。
 可以通过Xcode设置，Debug >> Debug Workflow >> Always show Disassembly 来查看会堆栈信息。
 ```
      0x12e1ac4c5 <+101>: movq   %rcx, %rdi
@@ -57,4 +57,4 @@ weak修饰的对象，在对象释放的时候会自动变成nil，会调用接�
 ### 扩展阅读 Association通过分类添加的对象是什么时候释放的？ 
 
 
-### 扩展阅读 Weak修饰的弱引用对象是不是线程安全的？
+### [扩展阅读 Weak修饰的弱引用对象是不是线程安全的？](http://jellygd.github.io/2018/09/26/%E6%89%A9%E5%B1%95%E9%98%85%E8%AF%BB-weak%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/)
