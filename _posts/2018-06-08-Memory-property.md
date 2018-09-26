@@ -1,4 +1,5 @@
 #  属性
+介绍什么是属性，属性Property 可以分成多少种。
 
 **`property`**  
 
@@ -7,7 +8,7 @@
 
 --
 
-property属性关键字
+#property属性关键字
 
 1. 原子性 - nonatomic 特质
 2. 读写权限 - readwrite (默认 ->读写)/ readonly （只读）
@@ -16,7 +17,7 @@ property属性关键字
 5. 不常用 - nonnull（是否可为空），null_resettable，nullable  iOS9 新增关键字。
 
 
-####属性介绍
+#属性介绍
 
 >readwrite 读写权限， 会生成getter 和 setter。
 
@@ -32,7 +33,7 @@ property属性关键字
 
 
 
-### 属性跟修饰符关系
+# 属性跟修饰符关系
 
 | 属性声明的属性|所有权修饰符 |
 |---|---|
@@ -44,7 +45,7 @@ property属性关键字
 |`unsafe_unretained` |`__unsafe_unretained ` 修饰符|
 
 
-### strong实现原理
+# strong实现原理
 
 
 普通对象的创建过程
@@ -182,7 +183,7 @@ id obj_retainAUtoreleaseReturnValue(obj){
 
 ```
 
-### weak实现的原理
+# weak实现的原理
 
 __weak 变量有两个功能：
 

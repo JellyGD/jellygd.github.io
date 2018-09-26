@@ -1,7 +1,7 @@
+
+---
 # 修饰符
-
-
-####属性修饰符有哪些？ 
+属性修饰符有哪些？ 
 
 ARC 的属性修饰符
 
@@ -15,7 +15,7 @@ ARC 的属性修饰符
 如果对象超出作用域的时候，对象的释放是不定的。
 
 --
-#### `__strong` 修饰符
+# `__strong` 修饰符
 
 > `__strong` 修饰符是 id类型 和 对象类型默认的所有权修饰符。
 > 
@@ -34,7 +34,7 @@ id __strong objc = [[Object alloc] init];
 
 ```
 --
-#### `__weak`修饰符
+# `__weak`修饰符
 
 `__weak` 修饰符 主要是为了解决循环引用而引入的修饰符。 `__weak` 修饰符跟 `__strong`修饰符刚好相反，提供弱引用。
 弱引用不能持有对象的实例。`__weak`修饰符在该对象被废弃的时候，弱引用会自动失效，并会赋值为nil。 （空弱引用）。
@@ -57,7 +57,7 @@ NSLog(@"B : %@",obj1);
 ```  
 
 --
-#### `__unsafe_unretained` 修饰符
+# `__unsafe_unretained` 修饰符
 
 `_weak` 修饰符在iOS5 以上才提供的， 在iOS4的应用程序中可使用 `__unsfe_unretained`修饰符
 
@@ -90,7 +90,7 @@ NSLog(@"B : %@",obj1);
 
 --
 
-#### `__autoreleasing`修饰符
+# `__autoreleasing`修饰符
 
 在 ARC 环境下，不能使用 `autolease`方法 和 `NSAutoleasePool`类。 但是`autolease` 功能是起作用的。
 
