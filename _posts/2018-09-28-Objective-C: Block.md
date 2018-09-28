@@ -165,6 +165,10 @@ Block在内存中的位置分为三种类型`NSGlobalBlock`，`NSStackBlock`, `N
 
 ## typedef 是什么？
 
+## 扩展阅读
+
+### strong 和 copy 修饰符有什么不同？（深浅拷贝方面）
+
 
 
 

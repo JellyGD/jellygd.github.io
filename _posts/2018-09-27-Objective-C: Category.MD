@@ -402,6 +402,169 @@ attachCategories(Class cls, category_list *cats, bool flush_caches)
 
 ## 扩展阅读
 ### category和extension区别
+
+#### 什么是extension？
+
+extension被开发者称之为扩展、延展、匿名分类。extension看起来很像一个匿名的category，但是extension和category几乎完全是两个东西。
+
+```
+// 一般来说寄生于一个类的.m文件中。  也可以单独一个.h文件中。
+@interface ViewController ()
+ 
+@end
+
+```
+
+
+#### 使用区别
+	extension可以添加实例变量，而category是无法添加实例变量。
+	
+	extension添加的方法 需要实现。  category添加的方法 可以不实现。
+	
+	extension和category都可以添加属性，但是category的属性不能生成成员变量和getter、setter方法的实现。
+
+#### 代码时机
+	extension在编译期决定，类的一部分。 而Category是在运行期决定的。 
+	
+	extension在编译期和头文件里的@interface以及实现文件里的@implement一起形成一个完整的类，它、extension伴随类的产生而产生，亦随之一起消亡。
+
+#### 作用
+	extension 一般作用定义私有属性 和私有方法。 隐藏类的私有信息。
+
+
 ### runtime是如何动态的创建类?
+runtime的创建一个新的类，主要用的是 
+
+```
+Class newClass =  objc_allocateClassPair(<#Class  _Nullable __unsafe_unretained superclass#>, <#const char * _Nonnull name#>, <#size_t extraBytes#>)
+
+class_addIvar(<#Class  _Nullable __unsafe_unretained cls#>, <#const char * _Nonnull name#>, <#size_t size#>, <#uint8_t alignment#>, <#const char * _Nullable types#>)
+
+class_addMethod(<#Class  _Nullable __unsafe_unretained cls#>, <#SEL  _Nonnull name#>, <#IMP  _Nonnull imp#>, <#const char * _Nullable types#>)
+
+class_addProtocol(<#Class  _Nullable __unsafe_unretained cls#>, <#Protocol * _Nonnull protocol#>)
+
+class_addProperty(<#Class  _Nullable __unsafe_unretained cls#>, <#const char * _Nonnull name#>, <#const objc_property_attribute_t * _Nullable attributes#>, <#unsigned int attributeCount#>)
+
+objc_registerClassPair(newClass)
+```   
+
+ 动态创建 GDRuntime类 继承NSObject。 
+ `objc_allocateClassPair `跟`objc_registerClassPair ` 需要配套使用。对类的增加方法，和变量 都要放在**Pair** 里面。  如下所示： 
+
+``` 
+/*
+        如何添加类方法。
+     */
+ 	Class newClass = objc_allocateClassPair([NSObject class], "GDRuntime", 0); // 为新创建的类分配内存， 参数1：新创建类的父类 参数2：新创建类的名称， 参数3：创建的内存空间大小 默认都写0。
+    
+    if (!class_addMethod(object_getClass(newClass), @selector(report1), (IMP)ReportFunction1, "v@:")){
+        NSLog(@"add meta method reportFunction failed");
+    }
+    
+    if (!class_addMethod(newClass, @selector(report), (IMP)ReportFunction, "v@:")) {
+        NSLog(@"add method reportFunction failed");
+    }
+    
+    if (!class_addIvar(newClass, "_name", sizeof(NSString *), log2(sizeof(NSString *)), @encode(NSString *))){
+        NSLog(@"add ivar _name failed");
+    }
+    objc_registerClassPair(newClass);// 将新建的类注册到运行时系统，否则系统无法识别新建的类。
+    // ** 注意点。
+    if (!class_addIvar(newClass, "_name1", sizeof(NSString *), log2(sizeof(NSString *)), @encode(NSString *))){
+        NSLog(@"add ivar _name1 failed");
+    }
+``` 
+
+**注意** 
+`_name1 `添加到`GDRuntime `是失败的。
+
+`v@: ` 这个是代表传入的方法参数类型。
+
 ### load 和 initialize 的区别
+
+#### 相同点
+load 和 initialize 都是会只调用一次。 在类初始化之前会被调用。
+
+#### 不同点
+调用的时机不一样， load 是在main()函数之前调用， 而initialize 是在当前类被第一次使用的时候会被调用。
+load方法的调用，是在Image.load 的时候，对所有的类进行所有的类的load方法.
+
+#### 使用场景
+load 方法一般使用场景是，例如swizzling(交换方法),Router的注册。
+initialize 一般使用场景就是在类调用之前，初始化一些静态数据。
+
 ### 消息发送是如何找到IMP的？ 
+消息发送，是Objective-C的一个特性， 一般来说，其他语言说的都是函数的调用，而在OC中说的是消息发送。 消息发送的机制主要依赖于运行时，在运行到的时候才决定被调用方和调用的函数。 主要有几个概念 methodLists (方法列表)，IMP（方法的实现地址，内存地址），SEL `@selector()`(方法选择器)，实例方法（需要对类初始化之后），类方法 （直接调用类中的方法 `+(void)xxx;` 以 + 好开头的方法）,isa (元类)。 这里不详细展开 有需要的自己去相对应的了解。
+
+```
+[self doxxx];
+
+// 相当于
+
+objc_msgSend(self,@selector(doxxx));
+
+```
+
+查找IMP的过程分为 **消息发送** 和 **消息转发**。
+
+消息发送的过程
+
+	1.在class 方法缓存 caches中查找是否有对应该的方法缓存，有则直接调用
+	2.通过获取方法列表（区分类方法和实例方法）然后匹配方法 SEL 是否有对应的方法。
+	3.如果当前类中没有找到，则继续会向父类查找，知道查找到根类 NSObject 或者 NSProxy中。
+	4.找到相对应的方法，得到一个地址，则是IMP的地址。
+	5.缓存到caches中，SEL为key，IMP为Value。 以便下次调用的时候能够快捷的调用。
+	6.调用IMP。 
+
+这个就是消息的发送过程， 需要区分是类方法列表 还是 实例方法列表， 因为方法的列表存储的位置是不一样的。  类方法列表存储在 obj_class中， 而实例方法列表存在isa(元类)中, 这个跟类的结构有关系。 
+
+消息发送的过程，是比较简单，就是通过方法选择器，去查找方法的实现地址。 如果在消息发送过程中，没有找到方法的实现地址，则会进入到消息的转发。
+
+消息的转发过程
+
+	1. - (id)forwardingTargetForSelector:(SEL)aSelector 对当前类或者父类中不支持的方法编号，进行方法转换 也支持类方法的消息重定向 + (id)forwardingTargetForSelector:(SEL)aSelector
+	2. - (NSInvocation *)methodSignatureForSelector：取到返回的方法签名用于生成NSInvocation对象，为接下来的完整的消息转发生成一个 NSMethodSignature对象
+	3. - (void)forWardInvocation:(NSinvocation *)a //在程序崩溃之前，系统会做一次完整的消息转发。
+        如果本类不能处理，则会调用超类的同名方法，在继承体系中每个类都有机会处理该方法调用的请求，一直到NSObject根类。
+	4.找到消息的接受者之后，也就是真正找到方法的实现地址之后，缓存到caches中，再重新调用消息的发送过程。
+	5.如果消息转发都没有找到当前的方法的IMP的时候，就会抛出异常（doesNotRecognizeSelector）。
+
+
+## 面试题
+
+```
+
+NSObject+Sark.h
+
+
+@interface NSObject (Sark)
+
+
++ (void)foo;
+
+- (void)foo;
+
+@end
+
+
+NSObject+Sark.m
+
+#import "NSObject+Sark.h"
+
+@implementation NSObject (Sark)
+
+- (void)foo{
+    NSLog(@"IMP: -[NSObject(Sark) foo]");
+}
+
+@end
+
+
+```
+根据上面代码 
+// 调用 
+[NSObject foo]; 
+
+会闪退吗？ 为什么？
+
