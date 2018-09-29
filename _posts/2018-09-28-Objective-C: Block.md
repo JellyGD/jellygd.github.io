@@ -5,7 +5,8 @@ block属性声明使用的是修饰符是copy，至于为什么会是copy接下
 ## block 的定义
 简单的使用block，可以先从block的定义来查看。
 
-```objc
+```obj-c
+
 返回类型(^block名称)(形参列表) = ^(形参列表){
 
 };
@@ -13,7 +14,8 @@ block属性声明使用的是修饰符是copy，至于为什么会是copy接下
 ```
 来看看block的调用时如何调用的
 
-```objc
+```obj-c
+
 block名称(实参); // 简单快捷
 
 // 一般我们定义block 都是当成property来使用的， 也有直接把block 当成参数来传递的。
@@ -22,7 +24,8 @@ block名称(实参); // 简单快捷
 
 可以通过`typedef <#returnType#>(^<#name#>)(<#arguments#>);` 来定义block。 可以看出 `returnType `是返回类型，`name `是block的名称，`arguments `则是形参列表，那么简单的使用则如下：
 
-```objc
+```obj-c
+
 typedef void(^BlockName)(NSString *name); // 一般如果形参列表没有，则写 void， 否则会有编译警告
 
 @property (nonatomic, copy) BlockName block; // 定义block属性。内存属性修饰符copy
@@ -44,7 +47,7 @@ self.xxx.block = ^(NSString *name){
 
 Block的使用，是不是很简单。 那么接下来复杂一点，带返回值的block；
 
-```objc
+```
 typedef (NSString *)(^BlockName)(NSString *name); // 当前定义了一个返回值为NSString的BlockName的block。
 
 @property (nonatomic, copy) BlockName block; // 定义block属性。内存属性修饰符copy
@@ -68,7 +71,7 @@ self.xxx.block = ^(NSString *name){
 
 带返回值的Block 也很简单对不对。 好了， 来个666的操作来一波哈~~  
 
-```objc
+```
 GDBlockDemo.h
 
 @interface GDBlockDemo : NSObject
@@ -107,7 +110,7 @@ gdDemo.addNum(1).addNum(2).addNum(3);
 ## block的内存属性为什么是copy，能其他的吗？
 那么内存属性是copy，肯定就要说下内存方面了，block在内存中是存放在什么位置呢? 接下来我们来查看下block存储的位置。
 
-```objc
+```
 - (void)showBlockAddress{
     
     void(^block1)(void) = ^(){
@@ -156,7 +159,7 @@ Block在内存中的位置分为三种类型`NSGlobalBlock`，`NSStackBlock`, `N
 ## block是如何捕获值的呢？
 block的定义是 带有自动变量值的匿名函数。  带有自动变量值说的就是截获自动变量值。
 
-```objc
+```
 #import <Foundation/Foundation.h>
 
 - (void)testBlock {
@@ -184,7 +187,7 @@ block的定义是 带有自动变量值的匿名函数。  带有自动变量值
 
 如果不加block 是不是全部都不能修改呢？ 来看下接下来的代码 有没有问题？ 
 
-```objc
+```
 
 - (void)testBlockArray{
     NSMutableArray *array = [NSMutableArray array];
@@ -209,7 +212,7 @@ block截获自动变量的方法并没有实现对C语言数组的截获。
 ## block的原理是什么？
 block通过支持block的编译器，含有Block语法的源代码转换为一般C语言编译器能够处理的源代码。并做为C语言的源代码被编译。
 
-```C
+```
 
 struct __block_impl {
     void *isa; // 指向所属类的指针，也就是block的类型
@@ -266,7 +269,7 @@ clang后，再对代码进行简化，可以看出会比较简单。 主要来�
 
 接下来看下`clang`下简单的代码：
 
-```objc
+```
 NSUInteger index = 1;
 void(^block2)(void) = ^(){
     NSLog(@"block2 %lu",(unsigned long)index);
@@ -275,20 +278,17 @@ void(^block2)(void) = ^(){
 ```
 clang后得到的简化代码如下：
 
-```C
-
+```
 ```
 
 
-## block中遇到循环引用怎么解决？ 
+##  block中遇到循环引用怎么解决？ 
 
 首先先了解下， 什么时候循环引用，（retain cycle）。
 
 Object 决定是否会被释放的条件是 retainCount(引用计数器) 为 0; 在对Object持有操作的时候（strong,retain,copy），会对对象的引用计数器加1，从而让Object对象不会被释放。
 
 根据这种情况，如果对象A持有对象B， 对象B 间接或直接的 持有对象A， 形成了一个引用环。 B的释放需要等待持有对象A调用release， 对象A又在等待着独享B的release 方法调用。 所以导致对象A 和 对象B 一直不释放。
-
-
 
 ## weakself 和 strongself
 
