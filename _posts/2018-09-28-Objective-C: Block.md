@@ -5,7 +5,7 @@ block属性声明使用的是修饰符是copy，至于为什么会是copy接下
 ## block 的定义
 简单的使用block，可以先从block的定义来查看。
 
-```
+```Objective-C
 返回类型(^block名称)(形参列表) = ^(形参列表){
 
 };
@@ -13,7 +13,7 @@ block属性声明使用的是修饰符是copy，至于为什么会是copy接下
 ```
 来看看block的调用时如何调用的
 
-```
+```Objective-C
 block名称(实参); // 简单快捷
 
 // 一般我们定义block 都是当成property来使用的， 也有直接把block 当成参数来传递的。
@@ -22,7 +22,7 @@ block名称(实参); // 简单快捷
 
 可以通过`typedef <#returnType#>(^<#name#>)(<#arguments#>);` 来定义block。 可以看出 `returnType `是返回类型，`name `是block的名称，`arguments `则是形参列表，那么简单的使用则如下：
 
-```
+```Objective-C
 typedef void(^BlockName)(NSString *name); // 一般如果形参列表没有，则写 void， 否则会有编译警告
 
 @property (nonatomic, copy) BlockName block; // 定义block属性。内存属性修饰符copy
@@ -44,7 +44,7 @@ self.xxx.block = ^(NSString *name){
 
 Block的使用，是不是很简单。 那么接下来复杂一点，带返回值的block；
 
-```
+```Objective-C
 typedef (NSString *)(^BlockName)(NSString *name); // 当前定义了一个返回值为NSString的BlockName的block。
 
 @property (nonatomic, copy) BlockName block; // 定义block属性。内存属性修饰符copy
@@ -68,7 +68,7 @@ self.xxx.block = ^(NSString *name){
 
 带返回值的Block 也很简单对不对。 好了， 来个666的操作来一波哈~~  
 
-```
+```Objective-C
 GDBlockDemo.h
 
 @interface GDBlockDemo : NSObject
@@ -107,7 +107,7 @@ gdDemo.addNum(1).addNum(2).addNum(3);
 ## block的内存属性为什么是copy，能其他的吗？
 那么内存属性是copy，肯定就要说下内存方面了，block在内存中是存放在什么位置呢? 接下来我们来查看下block存储的位置。
 
-```
+```Objective-C
 - (void)showBlockAddress{
     
     void(^block1)(void) = ^(){
@@ -156,7 +156,7 @@ Block在内存中的位置分为三种类型`NSGlobalBlock`，`NSStackBlock`, `N
 ## block是如何捕获值的呢？
 block的定义是 带有自动变量值的匿名函数。  带有自动变量值说的就是截获自动变量值。
 
-```
+```Objective-C
 #import <Foundation/Foundation.h>
 
 - (void)testBlock {
@@ -272,6 +272,10 @@ void(^block2)(void) = ^(){
     NSLog(@"block2 %lu",(unsigned long)index);
 };
     
+```
+clang后得到的简化代码如下：
+
+```
 ```
 
 
