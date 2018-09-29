@@ -52,9 +52,8 @@ typedef (NSString *)(^BlockName)(NSString *name); // 当前定义了一个返回
 // 调用block 则简单很多
 
 if (self.block) { // 判断block 是否存在，存在才调用
-	
- NSString *name = self.block(@"hello word");
- console.log(@"%@", name);
+	NSString *name = self.block(@"hello word");
+	console.log(@"%@", name);
 }
 
 // 外部可以对block进行赋值。
@@ -181,11 +180,12 @@ block的定义是 带有自动变量值的匿名函数。  带有自动变量值
 
 
 ### __block说明符的作用
-自动变量值被截获只能保存执行Block语法的瞬间值，保存后就不能改写改值。在之前的代码中，也看到了使用了`__block`来修饰变量，然后在`block`中就可以当前的变量做修改。如果加`__block`则只能对变量做引用。 
+自动变量值被截获只能保存执行Block语法的瞬间值，保存后就不能改写改值。在之前的代码中，也看到了使用了`__block`来修饰变量，然后在`block`中就可以当前的变量做修改。如果不加`__block`则只能对变量做引用。 
 
 如果不加block 是不是全部都不能修改呢？ 来看下接下来的代码 有没有问题？ 
 
 ```
+
 - (void)testBlockArray{
     NSMutableArray *array = [NSMutableArray array];
     void (^block)(void) = ^(){
@@ -210,6 +210,7 @@ block截获自动变量的方法并没有实现对C语言数组的截获。
 block通过支持block的编译器，含有Block语法的源代码转换为一般C语言编译器能够处理的源代码。并做为C语言的源代码被编译。
 
 ```
+
 struct __block_impl {
     void *isa; // 指向所属类的指针，也就是block的类型
     int Flags; // 标志变量，在实现block的内部操作时会用到
@@ -263,7 +264,15 @@ clang后，再对代码进行简化，可以看出会比较简单。 主要来�
 
 先给个结论：**在执行Block语法时，Block语法表达式锁使用的自动变量值被保存到Block的结构体实例中。**
 
-接下来看下clang
+接下来看下`clang`下简单的代码：
+
+```
+NSUInteger index = 1;
+void(^block2)(void) = ^(){
+    NSLog(@"block2 %lu",(unsigned long)index);
+};
+    
+```
 
 
 ## block中遇到循环引用怎么解决？ 
