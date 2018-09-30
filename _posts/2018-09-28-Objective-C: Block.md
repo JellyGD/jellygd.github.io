@@ -7,24 +7,25 @@ block属性声明使用的是修饰符是copy，至于为什么会是copy接下
 
 ```obj-c
 
-返回类型(^block名称)(形参列表) = ^(形参列表){
-
-};
+	返回类型(^block名称)(形参列表) = ^(形参列表){
+	
+	};
 
 ```
 来看看block的调用时如何调用的
 
 ```obj-c
 
-block名称(实参); // 简单快捷
-
-// 一般我们定义block 都是当成property来使用的， 也有直接把block 当成参数来传递的。
+	block名称(实参); // 简单快捷
+	
+	// 一般我们定义block 都是当成property来使用的， 也有直接把block 当成参数来传递的。
 
 ```
 
 可以通过`typedef <#returnType#>(^<#name#>)(<#arguments#>);` 来定义block。 可以看出 `returnType `是返回类型，`name `是block的名称，`arguments `则是形参列表，那么简单的使用则如下：
 
 ```obj-c
+xxx.m
 
 typedef void(^BlockName)(NSString *name); // 一般如果形参列表没有，则写 void， 否则会有编译警告
 
@@ -209,6 +210,7 @@ block是会自动截获变量， 但是截获的是类对象的结构体实例�
 
 block截获自动变量的方法并没有实现对C语言数组的截获。
 
+
 ## block的原理是什么？
 block通过支持block的编译器，含有Block语法的源代码转换为一般C语言编译器能够处理的源代码。并做为C语言的源代码被编译。
 
@@ -279,7 +281,46 @@ void(^block2)(void) = ^(){
 clang后得到的简化代码如下：
 
 ```
+struct __BlockSImple__simpleGD_block_impl_0 {
+  struct __block_impl impl;
+  struct __BlockSImple__simpleGD_block_desc_0* Desc;
+  NSUInteger index;
+  __BlockSImple__simpleGD_block_impl_0(void *fp, struct __BlockSImple__simpleGD_block_desc_0 *desc, NSUInteger _index, int flags=0) : index(_index) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+static void __BlockSImple__simpleGD_block_func_0(struct __BlockSImple__simpleGD_block_impl_0 *__cself) {
+  NSUInteger index = __cself->index; // bound by copy
+
+        NSLog((NSString *)&__NSConstantStringImpl__var_folders_73_qvvgqbjs293gvcwl1xmjc01m0000gp_T_BlockSImple_f505ff_mi_0,(unsigned long)index);
+    }
+
+static struct __BlockSImple__simpleGD_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+} __BlockSImple__simpleGD_block_desc_0_DATA = { 0, sizeof(struct __BlockSImple__simpleGD_block_impl_0)};
+
+static void _I_BlockSImple_simpleGD(BlockSImple * self, SEL _cmd) {
+    NSUInteger index = 1;
+    void(*block2)(void) = ((void (*)())&__BlockSImple__simpleGD_block_impl_0((void *)__BlockSImple__simpleGD_block_func_0, &__BlockSImple__simpleGD_block_desc_0_DATA, index));
+}
+
 ```
+
+
+可以看出 在`__BlockSImple__simpleGD_block_impl_0 `结构体中增加了 ` NSUInteger index;`, 在构造函数中增加了 `: index(_index)`。
+
+就是在block 声明的时候，就已经把当前值已经存储到了block的结构体实例中。 
+
+**当前值** 这个跟 对象在内存中表现有关  **地址 : 值**。  我们传递的是值而不是对象地址。 所以不能对对象地址进行新的赋值， 但是可以对值进行操作, 也就出现了 之前的代码 NSMutableArray 可以往数组里面添加对象。
+
+
+
+
+
 
 
 ##  block中遇到循环引用怎么解决？ 
@@ -289,6 +330,25 @@ clang后得到的简化代码如下：
 Object 决定是否会被释放的条件是 retainCount(引用计数器) 为 0; 在对Object持有操作的时候（strong,retain,copy），会对对象的引用计数器加1，从而让Object对象不会被释放。
 
 根据这种情况，如果对象A持有对象B， 对象B 间接或直接的 持有对象A， 形成了一个引用环。 B的释放需要等待持有对象A调用release， 对象A又在等待着独享B的release 方法调用。 所以导致对象A 和 对象B 一直不释放。
+
+那么在Block为什么会有循环引用呢？ 
+
+```
+	
+A.h
+
+typedef void(^block1)(void);
+
+@property (nonatomic, copy) block1 block;
+
+
+// 使用的时候
+
+
+
+	
+```
+
 
 ## weakself 和 strongself
 
