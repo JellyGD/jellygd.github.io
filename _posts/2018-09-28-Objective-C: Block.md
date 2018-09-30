@@ -317,9 +317,104 @@ static void _I_BlockSImple_simpleGD(BlockSImple * self, SEL _cmd) {
 
 **当前值** 这个跟 对象在内存中表现有关  **地址 : 值**。  我们传递的是值而不是对象地址。 所以不能对对象地址进行新的赋值， 但是可以对值进行操作, 也就出现了 之前的代码 NSMutableArray 可以往数组里面添加对象。
 
+接下来看下 __block 修饰符。 这个会对block的结构体有什么改变。
 
+```
+struct __Block_byref_array_0 {
+  void *__isa; // 对象的实现
+__Block_byref_array_0 *__forwarding; // 指向自身的指针。
+ int __flags;
+ int __size;
 
+ void (*__Block_byref_id_object_copy)(void*, void*); // 对象类型才有 copy的方法  当Block从栈复制到堆时，使用_Block_object_copy函数，持有Block截获的对象
+ void (*__Block_byref_id_object_dispose)(void*); // 对象类型才有dispose方法 当堆上的Block被废弃时，使用_Block_object_dispose函数，释放Block截获的对象。
+ NSMutableArray *array; // __block变量被追加为成员变量 ARC 上 默认是Strong的。
+};
 
+struct __BlockClass__testBlock1Array_block_impl_0 {
+  struct __block_impl impl;
+  struct __BlockClass__testBlock1Array_block_desc_0* Desc;
+  __Block_byref_array_0 *array; // by ref 多了一个结构体
+  __BlockClass__testBlock1Array_block_impl_0(void *fp, struct __BlockClass__testBlock1Array_block_desc_0 *desc, __Block_byref_array_0 *_array, int flags=0) : array(_array->__forwarding) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+static void __BlockClass__testBlock1Array_block_func_0(struct __BlockClass__testBlock1Array_block_impl_0 *__cself) {
+  __Block_byref_array_0 *array = __cself->array; // bound by ref
+
+        (array->__forwarding->array) = ((NSMutableArray * _Nonnull (*)(id, SEL))(void *)objc_msgSend)((id)objc_getClass("NSMutableArray"), sel_registerName("array"));
+        ((void (*)(id, SEL, ObjectType _Nonnull))(void *)objc_msgSend)((id)(array->__forwarding->array), sel_registerName("addObject:"), (id _Nonnull)(NSString *)&__NSConstantStringImpl__var_folders_73_qvvgqbjs293gvcwl1xmjc01m0000gp_T_BlockClass_a8ebec_mi_1);
+        NSLog((NSString *)&__NSConstantStringImpl__var_folders_73_qvvgqbjs293gvcwl1xmjc01m0000gp_T_BlockClass_a8ebec_mi_2,(array->__forwarding->array), (array->__forwarding->array));
+
+    }
+static void __BlockClass__testBlock1Array_block_copy_0(struct __BlockClass__testBlock1Array_block_impl_0*dst, struct __BlockClass__testBlock1Array_block_impl_0*src) {_Block_object_assign((void*)&dst->array, (void*)src->array, 8/*BLOCK_FIELD_IS_BYREF*/);}
+
+static void __BlockClass__testBlock1Array_block_dispose_0(struct __BlockClass__testBlock1Array_block_impl_0*src) {_Block_object_dispose((void*)src->array, 8/*BLOCK_FIELD_IS_BYREF*/);}
+
+static struct __BlockClass__testBlock1Array_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+  void (*copy)(struct __BlockClass__testBlock1Array_block_impl_0*, struct __BlockClass__testBlock1Array_block_impl_0*);
+  void (*dispose)(struct __BlockClass__testBlock1Array_block_impl_0*);
+} __BlockClass__testBlock1Array_block_desc_0_DATA = { 0, sizeof(struct __BlockClass__testBlock1Array_block_impl_0), __BlockClass__testBlock1Array_block_copy_0, __BlockClass__testBlock1Array_block_dispose_0};
+
+static void _I_BlockClass_testBlock1Array(BlockClass * self, SEL _cmd) {
+    __attribute__((__blocks__(byref))) __Block_byref_array_0 array = {(void*)0,(__Block_byref_array_0 *)&array, 33554432, sizeof(__Block_byref_array_0), __Block_byref_id_object_copy_131, __Block_byref_id_object_dispose_131, ((NSMutableArray * _Nonnull (*)(id, SEL))(void *)objc_msgSend)((id)objc_getClass("NSMutableArray"), sel_registerName("array"))};
+    ((void (*)(id, SEL, ObjectType _Nonnull))(void *)objc_msgSend)((id)(array.__forwarding->array), sel_registerName("addObject:"), (id _Nonnull)(NSString *)&__NSConstantStringImpl__var_folders_73_qvvgqbjs293gvcwl1xmjc01m0000gp_T_BlockClass_a8ebec_mi_0);
+    void (*block)(void) = ((void (*)())&__BlockClass__testBlock1Array_block_impl_0((void *)__BlockClass__testBlock1Array_block_func_0, &__BlockClass__testBlock1Array_block_desc_0_DATA, (__Block_byref_array_0 *)&array, 570425344));
+
+    NSLog((NSString *)&__NSConstantStringImpl__var_folders_73_qvvgqbjs293gvcwl1xmjc01m0000gp_T_BlockClass_a8ebec_mi_3,(array.__forwarding->array), (array.__forwarding->array));
+    ((void (*)(__block_impl *))((__block_impl *)block)->FuncPtr)((__block_impl *)block);
+    NSLog((NSString *)&__NSConstantStringImpl__var_folders_73_qvvgqbjs293gvcwl1xmjc01m0000gp_T_BlockClass_a8ebec_mi_4,(array.__forwarding->array), (array.__forwarding->array));
+
+}
+```
+
+相对于不加`__block 修饰符`，`clang`后的代码多了`__Block_byref_array_0 `结构体
+在 array 初始化的时候， 就已经变成下面的代码的样子， 得到的是 `__Block_byref_array_0` 结构体实例。
+
+**注意**
+
+里面有两个函数 `_Block_object_assign ` 和`_Block_object_dispose `两个函数。
+
+`_Block_object_assign ` 函数相当于 `retain`实例方法的函数， 将对象赋值在对象类型的结构体成员变量中。
+
+`_Block_object_dispose `函数相当于 释放block中结构体实例中的成员变量。
+
+来看看，转换后的 `NSMutableArray` 是什么？ 
+
+```
+__attribute__((__blocks__(byref))) __Block_byref_array_0 array = {(void*)0,(__Block_byref_array_0 *)&array, 33554432, sizeof(__Block_byref_array_0), __Block_byref_id_object_copy_131, __Block_byref_id_object_dispose_131, ((NSMutableArray * _Nonnull (*)(id, SEL))(void *)objc_msgSend)((id)objc_getClass("NSMutableArray"), sel_registerName("array"))};
+
+// 将得到的array 转换成 __Block_byref_array_0 的结构体
+
+struct __Block_byref_array_0 {
+  void *__isa; // 对象的实现
+__Block_byref_array_0 *__forwarding; // 指向自身的指针。
+ int __flags;
+ int __size;
+
+ void (*__Block_byref_id_object_copy)(void*, void*); // 对象类型才有 copy的方法  当Block从栈复制到堆时，使用_Block_object_copy函数，持有Block截获的对象
+ void (*__Block_byref_id_object_dispose)(void*); // 对象类型才有dispose方法 当堆上的Block被废弃时，使用_Block_object_dispose函数，释放Block截获的对象。
+ NSMutableArray *array; // __block变量被追加为成员变量 ARC 上 默认是Strong的, 也就是Block 会持有object的原因。
+};
+
+```
+
+在接下来调用 array的 使用方式变成了： `array->__forwarding->array`
+
+	array （第一个）： 结构体（__Block_byref_array_0）的指针。
+	__forwarding ：  指向自身的指针。 会根据 block从栈中拷贝到堆中， 指向地址也会跟随着变化 指向堆中的对象地址。
+	array （第二个）： 结构体中保存的成员变量。 
+	
+**注意**
+
+`__Block_byref_array_0 ` 结构体不写到block的结构体中的原因， 是为了防止其他的block 也使用当前 arry 。 这样就可以减少代码量和空间。
+
+在ARC 有效的情况下， 编译器会判断将自动生成的Block 从栈中拷贝到堆中的代码，因此不需要自己手动的拷贝block 到堆中，而MRC则需要。
 
 
 
@@ -357,6 +452,27 @@ typedef void(^block1)(void);
 ## 扩展阅读
 
 ### strong 和 copy 修饰符有什么不同？（深浅拷贝方面）
+
+
+## 面试题
+
+1.下面代码执行结果是？（ARC的情况下）
+
+```
+- (NSArray *)getStackBlock{
+    int val = 10;
+    return [NSArray arrayWithObjects:
+    			^{NSLog(@"val = %d",val);},
+    			^{NSLog(@"val = %d",val);} ,nil];
+}
+
+- (void)testStatckBloc{
+    
+    NSArray *array = [self getStackBlock];
+    void(^blk)(void) = array.firstObject;
+    blk();
+}
+```
 
 
 
