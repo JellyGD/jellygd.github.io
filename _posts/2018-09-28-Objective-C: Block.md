@@ -24,7 +24,7 @@ block属性声明使用的是修饰符是copy，至于为什么会是copy接下
 
 可以通过`typedef <#returnType#>(^<#name#>)(<#arguments#>);` 来定义block。 可以看出 `returnType `是返回类型，`name `是block的名称，`arguments `则是形参列表，那么简单的使用则如下：
 
-```obj-c
+``` objc
 xxx.m
 
 typedef void(^BlockName)(NSString *name); // 一般如果形参列表没有，则写 void， 否则会有编译警告
@@ -48,7 +48,7 @@ self.xxx.block = ^(NSString *name){
 
 Block的使用，是不是很简单。 那么接下来复杂一点，带返回值的block；
 
-```
+``` objc
 typedef (NSString *)(^BlockName)(NSString *name); // 当前定义了一个返回值为NSString的BlockName的block。
 
 @property (nonatomic, copy) BlockName block; // 定义block属性。内存属性修饰符copy
@@ -111,7 +111,7 @@ gdDemo.addNum(1).addNum(2).addNum(3);
 ## block的内存属性为什么是copy，能其他的吗？
 那么内存属性是copy，肯定就要说下内存方面了，block在内存中是存放在什么位置呢? 接下来我们来查看下block存储的位置。
 
-```
+``` objc
 - (void)showBlockAddress{
     
     void(^block1)(void) = ^(){
@@ -136,7 +136,7 @@ gdDemo.addNum(1).addNum(2).addNum(3);
 
 输入结果如下：
 
-```
+``` objc
 2018-09-28 02:04:20.543496+0800 Network[44601:1212691] block1, <__NSGlobalBlock__: 0x1075afb08>
 2018-09-28 02:04:20.543661+0800 Network[44601:1212691] block2, <__NSMallocBlock__: 0x6000007e8930>
 2018-09-28 02:04:20.543806+0800 Network[44601:1212691] block3, <__NSMallocBlock__: 0x6000007e5980>
@@ -160,7 +160,7 @@ Block在内存中的位置分为三种类型`NSGlobalBlock`，`NSStackBlock`, `N
 ## block是如何捕获值的呢？
 block的定义是 带有自动变量值的匿名函数。  带有自动变量值说的就是截获自动变量值。
 
-```
+``` objc
 #import <Foundation/Foundation.h>
 
 - (void)testBlock {
@@ -188,7 +188,7 @@ block的定义是 带有自动变量值的匿名函数。  带有自动变量值
 
 如果不加block 是不是全部都不能修改呢？ 来看下接下来的代码 有没有问题？ 
 
-```
+``` objc
 
 - (void)testBlockArray{
     NSMutableArray *array = [NSMutableArray array];
@@ -214,7 +214,7 @@ block截获自动变量的方法并没有实现对C语言数组的截获。
 ## block的原理是什么？
 block通过支持block的编译器，含有Block语法的源代码转换为一般C语言编译器能够处理的源代码。并做为C语言的源代码被编译。
 
-```
+``` objc
 
 struct __block_impl {
     void *isa; // 指向所属类的指针，也就是block的类型
@@ -271,7 +271,7 @@ clang后，再对代码进行简化，可以看出会比较简单。 主要来�
 
 接下来看下`clang`下简单的代码：
 
-```
+``` objc
 NSUInteger index = 1;
 void(^block2)(void) = ^(){
     NSLog(@"block2 %lu",(unsigned long)index);
@@ -280,7 +280,7 @@ void(^block2)(void) = ^(){
 ```
 clang后得到的简化代码如下：
 
-```
+``` objcs
 struct __BlockSImple__simpleGD_block_impl_0 {
   struct __block_impl impl;
   struct __BlockSImple__simpleGD_block_desc_0* Desc;
@@ -319,7 +319,7 @@ static void _I_BlockSImple_simpleGD(BlockSImple * self, SEL _cmd) {
 
 接下来看下 __block 修饰符。 这个会对block的结构体有什么改变。
 
-```
+``` objc
 struct __Block_byref_array_0 {
   void *__isa; // 对象的实现
 __Block_byref_array_0 *__forwarding; // 指向自身的指针。
@@ -531,6 +531,11 @@ typedef void(^block1)(void);
 
 2. Masonary 是否会造成循环引用？ 
 
+```
+[self.headView mas_makeConstraints:^(MASConstraintMaker *make) {
+    make.centerY.equalTo(self.otherView.mas_centerY);
+}];
+```
 
 
 
