@@ -412,7 +412,7 @@ __Block_byref_array_0 *__forwarding; // 指向自身的指针。
 	
 **注意**
 
-`__Block_byref_array_0 ` 结构体不写到block的结构体中的原因， 是为了防止其他的block 也使用当前 arry 。 这样就可以减少代码量和空间。
+`__Block_byref_array_0 ` 结构体不写到block的结构体中的原因， 是为了防止其他的block 也使用当前 array 。 这样就可以减少代码量和空间。
 
 在ARC 有效的情况下， 编译器会判断将自动生成的Block 从栈中拷贝到堆中的代码，因此不需要自己手动的拷贝block 到堆中，而MRC则需要。
 
@@ -428,22 +428,54 @@ Object 决定是否会被释放的条件是 retainCount(引用计数器) 为 0; 
 
 那么在Block为什么会有循环引用呢？ 
 
-```
-	
-A.h
-
+``` objc
 typedef void(^block1)(void);
+
+@interface GDBlockDemo : NSObject	
 
 @property (nonatomic, copy) block1 block;
 
+@end
 
 // 使用的时候
+@implementation GDBlockDemo
 
+- (void)configBlock{
+    self.block = ^(){
+        [self doSomething];
+    };
+}
 
-
+@end
 	
 ```
 
+上面的代码中，在 `configBlock `函数中， 为`block` 赋值， 但是这个时候，`block`会对`self`做持有的操作， 而`self`自身也持有着`block`。 导致出现了环。 从而引起内存泄露。 
+
+那么如何解决循环引用的问题呢？  需要对上面的代码做如下修改：
+
+``` objc
+- (void)configBlock{
+    __weak typedef(self) weakSelf = self;
+    self.block = ^(){
+        [weakSelf doSomething];
+    };
+}
+```
+定义了一个新的`weak `变量 `__weak typedef(self) weakSelf = self;`
+调用改成 `[weakSelf doSomething];`
+
+**注意**
+
+1.不是所有的`Block`使用到`self`的都需要添加`weakself`，因为不一定会形成循环引用，例如：
+
+```objc
+[UIView animateWithDuration:0.5 animations:^{ 
+	NSLog(@"%@", self);
+}];
+```
+
+****
 
 ## weakself 和 strongself
 
@@ -453,12 +485,35 @@ typedef void(^block1)(void);
 
 ### strong 和 copy 修饰符有什么不同？（深浅拷贝方面）
 
+### 内存的5大区域。
+内存的5大区域分别是: 
+
+	1.栈区 （stack）: 存放函数的参数值，局部变量等，由编译器自动分配和释放，
+		通常函数执行结束后就会被释放。相对于数据结构中的栈。  效率高，但是容量有限。
+		
+	2.堆区 （heap）： 通过 new  malloc realloc 分配的内存块，编译器不管释放，
+		需要手动管理。如果应用程序没有释放，操作系统会回收。 分配方式类似数据结构中的链表。
+		
+	3.常量区： 常量存储地方，不允许修改。
+	
+	4.静态区： 全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域，
+		未初始化的全局变量和未初始化的静态变量在相邻的另一块区域。程序结束后，由系统释放。
+		
+	5.代码区：存放函数体的二进制代码。
+
+#### 堆栈的区别
+	1、分配释放： 栈中的分配有编译器自动分配和释放， 对于堆来说，释放工作由程序员控制。
+	
+	2、空间上： 栈空间比堆空间小很多。
+	
+	3、生命周期：栈中存储的变量出了作用域就无效了，而堆由于是由程序员进行控制释放的，
+				变量的生命周期可以延长。
 
 ## 面试题
 
 1.下面代码执行结果是？（ARC的情况下）
 
-```
+```objc
 - (NSArray *)getStackBlock{
     int val = 10;
     return [NSArray arrayWithObjects:
@@ -473,6 +528,12 @@ typedef void(^block1)(void);
     blk();
 }
 ```
+
+2. Masonary 是否会造成循环引用？ 
+
+
+
+
 
 
 
