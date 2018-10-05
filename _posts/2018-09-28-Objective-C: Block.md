@@ -5,7 +5,7 @@ block属性声明使用的是修饰符是copy，至于为什么会是copy接下
 ## block 的定义
 简单的使用block，可以先从block的定义来查看。
 
-```obj-c
+``` objc
 
 	返回类型(^block名称)(形参列表) = ^(形参列表){
 	
@@ -14,7 +14,7 @@ block属性声明使用的是修饰符是copy，至于为什么会是copy接下
 ```
 来看看block的调用时如何调用的
 
-```obj-c
+``` objc
 
 	block名称(实参); // 简单快捷
 	
@@ -72,7 +72,7 @@ self.xxx.block = ^(NSString *name){
 
 带返回值的Block 也很简单对不对。 好了， 来个666的操作来一波哈~~  
 
-```
+``` objc
 GDBlockDemo.h
 
 @interface GDBlockDemo : NSObject
@@ -386,7 +386,7 @@ static void _I_BlockClass_testBlock1Array(BlockClass * self, SEL _cmd) {
 
 来看看，转换后的 `NSMutableArray` 是什么？ 
 
-```
+``` objc
 __attribute__((__blocks__(byref))) __Block_byref_array_0 array = {(void*)0,(__Block_byref_array_0 *)&array, 33554432, sizeof(__Block_byref_array_0), __Block_byref_id_object_copy_131, __Block_byref_id_object_dispose_131, ((NSMutableArray * _Nonnull (*)(id, SEL))(void *)objc_msgSend)((id)objc_getClass("NSMutableArray"), sel_registerName("array"))};
 
 // 将得到的array 转换成 __Block_byref_array_0 的结构体
@@ -465,6 +465,60 @@ typedef void(^block1)(void);
 定义了一个新的`weak `变量 `__weak typedef(self) weakSelf = self;`
 调用改成 `[weakSelf doSomething];`
 
+### weakself 怎么实现的
+直接`clang`来查看下，`__weak `怎么实现的。 
+
+需要对clang的命令改变下：
+`clang -rewrite-objc -fobjc-arc -fobjc-runtime=macosx-10.13 main.m `
+
+-fobjc-arc代表当前是arc环境 -fobjc-runtime=macosx-10.13：代表当前运行时环境 缺一不可 clang指令，否则会出现下面的错误提示：
+
+``` objc
+error: cannot create __weak reference because the current deployment target does not support weak references
+    __attribute__((objc_ownership(weak))) typeof(self) weakSelf = self;
+```
+
+``` objc
+
+struct __BlockSImple__weakSelfDemo_block_impl_0 {
+  struct __block_impl impl;
+  struct __BlockSImple__weakSelfDemo_block_desc_0* Desc;
+  BlockSImple *const __weak weakSelf;
+  __BlockSImple__weakSelfDemo_block_impl_0(void *fp, struct __BlockSImple__weakSelfDemo_block_desc_0 *desc, BlockSImple *const __weak _weakSelf, int flags=0) : weakSelf(_weakSelf) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+static void __BlockSImple__weakSelfDemo_block_func_0(struct __BlockSImple__weakSelfDemo_block_impl_0 *__cself) {
+  BlockSImple *const __weak weakSelf = __cself->weakSelf; // bound by copy
+
+        NSLog((NSString *)&__NSConstantStringImpl__var_folders_73_qvvgqbjs293gvcwl1xmjc01m0000gp_T_BlockSImple_19b9cf_mi_1,weakSelf);
+    }
+static void __BlockSImple__weakSelfDemo_block_copy_0(struct __BlockSImple__weakSelfDemo_block_impl_0*dst, struct __BlockSImple__weakSelfDemo_block_impl_0*src) {_Block_object_assign((void*)&dst->weakSelf, (void*)src->weakSelf, 3/*BLOCK_FIELD_IS_OBJECT*/);}
+
+static void __BlockSImple__weakSelfDemo_block_dispose_0(struct __BlockSImple__weakSelfDemo_block_impl_0*src) {_Block_object_dispose((void*)src->weakSelf, 3/*BLOCK_FIELD_IS_OBJECT*/);}
+
+static struct __BlockSImple__weakSelfDemo_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+  void (*copy)(struct __BlockSImple__weakSelfDemo_block_impl_0*, struct __BlockSImple__weakSelfDemo_block_impl_0*);
+  void (*dispose)(struct __BlockSImple__weakSelfDemo_block_impl_0*);
+} __BlockSImple__weakSelfDemo_block_desc_0_DATA = { 0, sizeof(struct __BlockSImple__weakSelfDemo_block_impl_0), __BlockSImple__weakSelfDemo_block_copy_0, __BlockSImple__weakSelfDemo_block_dispose_0};
+
+static void _I_BlockSImple_weakSelfDemo(BlockSImple * self, SEL _cmd) {
+    __attribute__((objc_ownership(weak))) typeof(self) weakSelf = self;
+    ((void (*)(id, SEL, BlockName))(void *)objc_msgSend)((id)self, sel_registerName("setBlock:"), ((void (*)())&__BlockSImple__weakSelfDemo_block_impl_0((void *)__BlockSImple__weakSelfDemo_block_func_0, &__BlockSImple__weakSelfDemo_block_desc_0_DATA, weakSelf, 570425344)));
+}
+
+```
+
+在结构体中 `__BlockSImple__weakSelfDemo_block_impl_0 ` 中添加了一个只读的`BlockSImple *const __weak weakSelf;`
+
+在当前的结构体中， 定义的是 __weak 的weakSelf 这样，在Block 中是不会对self经常强持有的， 所以能够解决循环引用的问题。 
+
+
 **注意**
 
 1.不是所有的`Block`使用到`self`的都需要添加`weakself`，因为不一定会形成循环引用，例如：
@@ -475,13 +529,49 @@ typedef void(^block1)(void);
 }];
 ```
 
+2. 没有使用`__block`的变量和使用`__weak typeof(xxx) ` 都没有在新生产一个`__Block_byref_xxx_0`的结构体，只有__block修饰的才会生成这样的结构体。
+
 ****
 
-## weakself 和 strongself
+
+
+# weakself 和 strongself
+
+weakself 刚才已经说明了， 就是针对循环引用的时候后，解决循环引用的。 
+
+`__weak typedef(self) weakSelf = self;` 会变成Block结构体中的一个 weak成员变量。
+这样block的调用就不会有循环引用了。  [根据weak的特性， 会在对象self 释放的时候自动变成nil。](http://jellygd.github.io/2018/09/26/Memory-weak%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B/) 也就是说会不安全的。 那么如果想保证block 的代码能够顺利的执行完成， 就添加了 `strongSelf` 的概念。 
+
+```objc
+- (void)weakSelfDemo{
+    __weak typeof(self) weakSelf = self;
+    self.block = ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __strong typeof(self) strongSelf = weakSelf;
+            NSLog(@"%@",strongSelf);
+        });
+    };
+}
+```
+
+`strongSelf `的作用就是对weakSelf 做强引用，保证代码的执行，执行过后，`strongSelf`就会被释放，`weakSelf`也会随之释放。
+
+
 
 ## typedef 是什么？
 
-## 扩展阅读
+typeof() 函数只是返回参数的类型
+
+#总结 
+
+1、`__block` 修饰的外部局部变量值和引用类型，都会重新生成一个包裹变量结构体`__Block_byref_xxx_0`，当前这个结构体把变量当成成员变量，通过`forwarding`的指针来解决栈copy到堆的问题。 
+
+2、没有修饰符的值类型和引用类型都会重新生成一个变量，值类型重新生成一个变量，将局部变量的值赋值给他，引用类型的变量，重新生成一个新指针，指向这个指针的copy，强引用。
+
+3、`weak`修饰符，没有重新生成包裹变量的结构体，重新声明一个弱引用指针，指向这个指针的copy体，所以不可以在内部修改变量的值；只能修饰引用类型的变量，所以 weak 修饰可以防止循环引用； 
+
+
+# 扩展阅读
 
 ### strong 和 copy 修饰符有什么不同？（深浅拷贝方面）
 
@@ -531,7 +621,7 @@ typedef void(^block1)(void);
 
 2. Masonary 是否会造成循环引用？ 
 
-```
+``` objc
 [self.headView mas_makeConstraints:^(MASConstraintMaker *make) {
     make.centerY.equalTo(self.otherView.mas_centerY);
 }];
