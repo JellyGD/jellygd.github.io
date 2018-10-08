@@ -1,4 +1,12 @@
-
+---
+layout:     post
+title:      内存方面 ARC介绍
+date:       2018-06-08
+author:     Jelly
+summary:    内存方面 ARC介绍
+categories: 内存
+ 
+---
 ---
 #  ARC 介绍原理
 !!内存管理的原则

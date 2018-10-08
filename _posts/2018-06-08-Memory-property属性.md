@@ -1,3 +1,13 @@
+---
+layout:     post
+title:      内存方面 属性
+date:       2018-06-08
+author:     Jelly
+summary:    内存方面 属性
+categories: 内存
+ 
+---
+
 #  属性
 介绍什么是属性，属性Property 可以分成多少种。属性相当于成员变量+存取方法。
 属性上有关键字，可以根据关键字的作用，区分几个类型。

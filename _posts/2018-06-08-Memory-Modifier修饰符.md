@@ -1,3 +1,12 @@
+---
+layout:     post
+title:      内存方面 修饰符
+date:       2018-06-08
+author:     Jelly
+summary:    内存方面 修饰符
+categories: 内存
+ 
+---
 
 ---
 # 修饰符
