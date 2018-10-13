@@ -39,4 +39,6 @@ __weak id obj;
 >释放时机是基于`runloop`而不是作用域；
 >
 >通过autorelease pool手动干预释放；循环多次时当心要对autorelease进行优化,否则会造成内存紧张。
+>
+>离开做作用域的时候，只是会给当前的对象添加到Autoreleasepool中，等待 autoreleasepool pop 操作。
 
