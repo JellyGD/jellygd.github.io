@@ -5,7 +5,7 @@ Autorelease是由多个AutoreleasePage组成。每一个Page的大小都是4096�
 在没有手动干预AutoreleasePool的情况下，Autorelease对象是在当前的RunLoop迭代结束是释放的
 而它能够释放的原因是系统在每个RunLoop迭代中都加入了自动释放池Push 和Pop.
 
-```
+``` objc
 __weak id obj;
 -(void)viewDidLoad{
     NSString *test = [NSString stringWithFormat:@"runLoop test"];

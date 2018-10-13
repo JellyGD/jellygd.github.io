@@ -216,7 +216,7 @@ for (NSInteger i = 0; i < 图像数 ; i++ ){
 
 Cannot autolease an autolease pool。
 
-NSAutoleasePool的autoleas 方法被改类重载。
+NSAutoleasePool的autolease 方法被改类重载。
 
 
 
