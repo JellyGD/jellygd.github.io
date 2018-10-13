@@ -41,4 +41,9 @@ __weak id obj;
 >通过autorelease pool手动干预释放；循环多次时当心要对autorelease进行优化,否则会造成内存紧张。
 >
 >离开做作用域的时候，只是会给当前的对象添加到Autoreleasepool中，等待 autoreleasepool pop 操作。
+>
+>runloop 会管理AutoreleasePool的创建 和 释放。 在RunLoop被创建的时候，AutoreleasePool 默认会被创建。
+>runloop 在进入休眠的时候，会对之前的runloop做释放，然后重新创建新的AutoreleasePool。
+>runloop 退出的时候，会对当前的AutoreleasePool 进行pop的操作。
+
 
