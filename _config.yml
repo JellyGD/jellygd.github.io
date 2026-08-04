@@ -37,6 +37,7 @@ paginate_path: "/page:num/"
 
 # ---- 插件（均为 GitHub Pages 白名单内）----
 plugins:
+  - jekyll-paginate
   - jemoji
   - jekyll-feed
   - jekyll-sitemap

@@ -2,9 +2,9 @@
 layout: default
 ---
 <div class="hero container container--wide">
-  <img class="hero__avatar" src="{{ site.avatar | relative_url }}" alt="{{ site.author }}">
+  <img class="hero__avatar" src="{{ site.avatar | relative_url }}" alt="{{ site.author.name }}">
   <div class="hero__eyebrow">// 你好，我是</div>
-  <h1 class="hero__name">{{ site.author }}</h1>
+  <h1 class="hero__name">{{ site.author.name }}</h1>
   <div class="hero__handle">@{{ site.author.handle | default: site.title }}</div>
   <p class="hero__bio">{{ site.author.bio }}</p>
   <div class="hero__social">

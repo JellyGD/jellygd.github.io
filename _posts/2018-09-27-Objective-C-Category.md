@@ -126,7 +126,7 @@ static struct /*_method_list_t*/ {
 } _OBJC_$_CATEGORY_INSTANCE_METHODS_MyClass_$_MyCategory __attribute__ ((used, section ("__DATA,__objc_const"))) = {
 	sizeof(_objc_method),
 	1,
-	{{(struct objc_selector *)"printName", "v16@0:8", (void *)_I_MyClass_MyCategory_printName}}
+	{% raw %}{{(struct objc_selector *)"printName", "v16@0:8", (void *)_I_MyClass_MyCategory_printName}}{% endraw %}
 };
 
 

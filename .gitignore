@@ -4,3 +4,11 @@
 # macOS
 .DS_Store
 .AppleDouble
+
+# Jekyll 构建产物（由 CI 生成，不提交）
+_site/
+.jekyll-cache/
+.sass-cache/
+
+# Bundler 锁文件（由 CI 的 bundler-cache 重新生成）
+Gemfile.lock
