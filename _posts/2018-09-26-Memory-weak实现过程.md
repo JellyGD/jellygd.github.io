@@ -1,5 +1,11 @@
+---
+layout: post
+title: "Memory: weak 实现过程"
+date: 2018-09-26
+author: Jelly
+categories: Memory
+---
 
-#  weak实现过程
 weak修饰的对象，会在被修饰对象释放的时候，修饰对象会自动变成nil。
 weak的出现主要是为了解决内存泄露问题。 那么我们分两个部分来说明。
 # weak修饰的对象是如何解决循环引用造成的内存泄露的问题。

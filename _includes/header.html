@@ -1,0 +1,24 @@
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="{{ '/' | relative_url }}">JellyGD<span class="cursor"></span></a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="菜单" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+    <nav class="site-nav" id="site-nav">
+      <ul>
+        {%- for item in site.menu -%}
+          {%- assign url = item.url | relative_url -%}
+          {%- assign is_active = false -%}
+          {%- if page.url == item.url or page.url == url -%}
+            {%- assign is_active = true -%}
+          {%- endif -%}
+          <li><a href="{{ url }}"{% if is_active %} class="active"{% endif %}>{{ item.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+  </div>
+</header>

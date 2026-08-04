@@ -1,0 +1,92 @@
+// =============================================================
+// 代码高亮（Rouge 暗色主题）
+// 作用于 .highlight 容器
+// =============================================================
+
+.highlight {
+  background: #0b0f17;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 1.1em 1.2em;
+  overflow: auto;
+  margin: 1.6em 0;
+}
+.highlight pre,
+.highlight code {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #c9d4e3;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+// Rouge token 配色
+.highlight {
+  .c   { color: #5c6b82; font-style: italic; }   // comment
+  .c1  { color: #5c6b82; font-style: italic; }   // comment single
+  .cm  { color: #5c6b82; font-style: italic; }   // comment multiline
+  .cp  { color: #5c6b82; }                        // comment preproc
+  .cs  { color: #5c6b82; font-style: italic; }   // comment special
+
+  .k   { color: #c792ea; }                        // keyword
+  .kc  { color: #c792ea; }                        // keyword constant
+  .kd  { color: #c792ea; }                        // keyword declaration
+  .kn  { color: #82aaff; }                        // keyword namespace
+  .kp  { color: #c792ea; }                        // keyword pseudo
+  .kr  { color: #c792ea; }                        // keyword reserved
+  .kt  { color: #ffcb6b; }                        // keyword type
+
+  .o   { color: #89ddff; }                        // operator
+  .ow  { color: #89ddff; }                        // operator word
+
+  .n   { color: #c9d4e3; }                        // name
+  .na  { color: #ffcb6b; }                        // name attribute
+  .nb  { color: #82aaff; }                        // name builtin
+  .nc  { color: #ffcb6b; }                        // name class
+  .no  { color: #f78c6c; }                        // name constant
+  .nd  { color: #82aaff; }                        // name decorator
+  .ni  { color: #c9d4e3; }                        // name entity
+  .ne  { color: #f78c6c; }                        // name exception
+  .nf  { color: #82aaff; }                        // name function
+  .nl  { color: #c9d4e3; }                        // name label
+  .nn  { color: #ffcb6b; }                        // name namespace
+  .nx  { color: #c9d4e3; }                        // name other
+  .py  { color: #c9d4e3; }                        // name property
+  .nt  { color: #82aaff; }                        // name tag
+  .nv  { color: #f78c6c; }                        // name variable
+  .vc  { color: #f78c6c; }                        // var class
+  .vg  { color: #f78c6c; }                        // var global
+  .vi  { color: #f78c6c; }                        // var instance
+
+  .m   { color: #f78c6c; }                        // number
+  .mf  { color: #f78c6c; }                        // float
+  .mh  { color: #f78c6c; }                        // hex
+  .mi  { color: #f78c6c; }                        // integer
+  .il  { color: #f78c6c; }                        // integer long
+  .mo  { color: #f78c6c; }                        // oct
+
+  .s   { color: #c3e88d; }                        // string
+  .sb  { color: #c3e88d; }                        // string backtick
+  .sc  { color: #c3e88d; }                        // string char
+  .sd  { color: #c3e88d; }                        // string doc
+  .s1  { color: #c3e88d; }                        // string single
+  .s2  { color: #c3e88d; }                        // string double
+  .se  { color: #f78c6c; }                        // string escape
+  .sh  { color: #c3e88d; }                        // shell
+  .si  { color: #c3e88d; }                        // string interp
+  .sx  { color: #c3e88d; }                        // string other
+  .sr  { color: #c3e88d; }                        // regex
+  .ss  { color: #c3e88d; }                        // symbol
+
+  .err { color: #ff5370; background: rgba(255,83,112,0.12); } // error
+  .gd  { color: #ff5370; }                        // diff delete
+  .gi  { color: #c3e88d; }                        // diff insert
+  .ge  { font-style: italic; }
+  .gs  { font-weight: 700; }
+  .gu  { color: #5c6b82; }                        // diff unchanged
+  .gt  { color: #ff5370; }                        // diff trailing
+  .w   { color: #c9d4e3; }                        // whitespace
+}

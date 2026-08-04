@@ -1,4 +1,11 @@
-#  RunLoop
+---
+layout: post
+title: "Memory: RunLoop 与内存关系"
+date: 2018-06-08
+author: Jelly
+categories: Memory
+---
+
 RunLoop跟内存之间的关系，在ARC的场景下，是依赖Autorelease来管理对象的释放的。 
 Autorelease是由多个AutoreleasePage组成。每一个Page的大小都是4096字节，然后用双链表的方式连接在一起。
 
@@ -45,5 +52,3 @@ __weak id obj;
 >runloop 会管理AutoreleasePool的创建 和 释放。 在RunLoop被创建的时候，AutoreleasePool 默认会被创建。
 >runloop 在进入休眠的时候，会对之前的runloop做释放，然后重新创建新的AutoreleasePool。
 >runloop 退出的时候，会对当前的AutoreleasePool 进行pop的操作。
-
-

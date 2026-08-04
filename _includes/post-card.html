@@ -1,0 +1,22 @@
+{%- comment -%} 文章列表卡片，循环时传入 post {%- endcomment -%}
+{%- assign chars = post.content | strip_html | size -%}
+{%- assign rt = chars | divided_by: 400.0 | ceil -%}
+{%- if rt < 1 %}{% assign rt = 1 %}{% endif -%}
+{%- assign excerpt = post.summary -%}
+{%- if excerpt == empty or excerpt == nil -%}
+  {%- assign excerpt = post.content | strip_html | truncate: 80 -%}
+{%- endif -%}
+<article class="post-card">
+  <a class="post-card__title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+  <p class="post-card__excerpt">{{ excerpt }}</p>
+  <div class="post-card__meta">
+    <span>{{ post.date | date: site.date_format }}</span>
+    {%- assign cat = post.categories | first -%}
+    {%- if cat -%}
+      <span class="dot">•</span>
+      <span>{{ cat }}</span>
+    {%- endif -%}
+    <span class="dot">•</span>
+    <span>约 {{ rt }} 分钟阅读</span>
+  </div>
+</article>

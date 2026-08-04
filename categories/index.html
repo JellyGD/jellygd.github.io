@@ -1,4 +1,15 @@
 ---
 layout: page
-type: categories
+title: 分类
 ---
+<h2 class="section-title">分类 <span class="count">({{ site.categories.size }})</span></h2>
+{%- for cat in site.categories -%}
+  <div class="taxonomy-group" id="{{ cat[0] | slugify }}">
+    <h3 class="taxonomy-group__name">{{ cat[0] }} <span class="n">{{ cat[1].size }} 篇</span></h3>
+    <div class="taxonomy-list">
+      {%- for post in cat[1] -%}
+        <a href="{{ post.url | relative_url }}"><span class="d">{{ post.date | date: site.date_format }}</span>{{ post.title }}</a>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endfor -%}

@@ -1,3 +1,15 @@
 ---
-layout: archive
+layout: page
+title: 归档
 ---
+<h2 class="section-title">文章归档 <span class="count">({{ site.posts.size }})</span></h2>
+{%- assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" -%}
+{%- for year in posts_by_year -%}
+  <div class="archive-year">{{ year.name }}</div>
+  {%- for post in year.items -%}
+    <div class="archive-item">
+      <span class="date">{{ post.date | date: '%m-%d' }}</span>
+      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    </div>
+  {%- endfor -%}
+{%- endfor -%}

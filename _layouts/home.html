@@ -1,0 +1,63 @@
+---
+layout: default
+---
+<div class="hero container container--wide">
+  <img class="hero__avatar" src="{{ site.avatar | relative_url }}" alt="{{ site.author }}">
+  <div class="hero__eyebrow">// 你好，我是</div>
+  <h1 class="hero__name">{{ site.author }}</h1>
+  <div class="hero__handle">@{{ site.author.handle | default: site.title }}</div>
+  <p class="hero__bio">{{ site.author.bio }}</p>
+  <div class="hero__social">
+    {%- include social-icons.html -%}
+  </div>
+
+  <div class="terminal">
+    <div class="terminal__bar">
+      <span class="terminal__dot r"></span>
+      <span class="terminal__dot y"></span>
+      <span class="terminal__dot g"></span>
+      <span class="terminal__title">zsh — jellygd@blog</span>
+    </div>
+    <div class="terminal__body">
+      <div><span class="prompt">$</span> <span class="cmd">whoami</span></div>
+      <div class="out">{{ site.author.name }} · {{ site.author.nickname }} · iOS / Objective-C Developer</div>
+      <div style="margin-top:.6rem"><span class="prompt">$</span> <span class="cmd">cat interests.txt</span></div>
+      <div class="out">{{ site.subtitle }}</div>
+      <div style="margin-top:.6rem"><span class="prompt">$</span> <span class="cmd">ls ./posts</span></div>
+      <div class="out">{{ paginator.total_posts }} 篇文章 · 持续更新中…</div>
+    </div>
+  </div>
+</div>
+
+<section class="container">
+  <h2 class="section-title">最新文章 <span class="count">({{ paginator.total_posts }})</span></h2>
+  <div class="post-list">
+    {%- for post in paginator.posts -%}
+      {%- include post-card.html -%}
+    {%- endfor -%}
+  </div>
+
+  {%- if paginator.total_pages > 1 -%}
+  <nav class="pagination" aria-label="分页">
+    {%- if paginator.previous_page -%}
+      <a href="{{ paginator.previous_page_path | relative_url }}">← 上一页</a>
+    {%- else -%}
+      <span class="disabled">← 上一页</span>
+    {%- endif -%}
+    {%- for page in (1..paginator.total_pages) -%}
+      {%- if page == paginator.page -%}
+        <span class="current">{{ page }}</span>
+      {%- elsif page == 1 -%}
+        <a href="{{ '/' | relative_url }}">{{ page }}</a>
+      {%- else -%}
+        <a href="{{ site.paginate_path | relative_url | replace: ':num', page }}">{{ page }}</a>
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if paginator.next_page -%}
+      <a href="{{ paginator.next_page_path | relative_url }}">下一页 →</a>
+    {%- else -%}
+      <span class="disabled">下一页 →</span>
+    {%- endif -%}
+  </nav>
+  {%- endif -%}
+</section>

@@ -1,4 +1,21 @@
 ---
 layout: page
-type: tags
+title: 标签
 ---
+<h2 class="section-title">标签 <span class="count">({{ site.tags.size }})</span></h2>
+<div class="tag-cloud">
+  {%- for tag in site.tags -%}
+    <a class="tag" href="#{{ tag[0] | slugify }}">#{{ tag[0] }}<span class="n">{{ tag[1].size }}</span></a>
+  {%- endfor -%}
+</div>
+<hr>
+{%- for tag in site.tags -%}
+  <div class="taxonomy-group" id="{{ tag[0] | slugify }}">
+    <h3 class="taxonomy-group__name">#{{ tag[0] }} <span class="n">{{ tag[1].size }} 篇</span></h3>
+    <div class="taxonomy-list">
+      {%- for post in tag[1] -%}
+        <a href="{{ post.url | relative_url }}"><span class="d">{{ post.date | date: site.date_format }}</span>{{ post.title }}</a>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endfor -%}

@@ -1,0 +1,6 @@
+# WorkBuddy 项目记忆（内部数据，不发布）
+.workbuddy/
+
+# macOS
+.DS_Store
+.AppleDouble

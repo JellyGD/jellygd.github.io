@@ -1,4 +1,11 @@
-# Block的声明以及使用
+---
+layout: post
+title: "Objective-C: Block"
+date: 2018-09-28
+author: Jelly
+categories: Objective-C
+---
+
 block 顾名思义代码块，将同一逻辑的代码放在一块，方便维护和代码更加简洁紧凑，易于阅读,而且它比函数使用更方便，代码更美观.
 block属性声明使用的是修饰符是copy，至于为什么会是copy接下来会讨论。本章会从简单的使用block，然后抽丝剥茧慢慢的深挖block的原理，知道了原理之后，才能够准确的判断问题和在开发中完善代码不会出坑。
 
@@ -626,13 +633,3 @@ typeof() 函数只是返回参数的类型
     make.centerY.equalTo(self.otherView.mas_centerY);
 }];
 ```
-
-
-
-
-
-
-
-
-
-
