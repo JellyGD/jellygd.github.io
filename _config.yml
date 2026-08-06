@@ -30,6 +30,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
+  - LocalLLMDemo
 
 # ---- 分页（仅首页）----
 paginate: 6
