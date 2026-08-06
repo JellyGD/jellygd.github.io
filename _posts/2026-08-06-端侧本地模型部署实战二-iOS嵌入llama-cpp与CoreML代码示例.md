@@ -6,28 +6,28 @@ title: 端侧本地模型部署实战（二）：把模型塞进 iPhone，难在
 >
 > （一）讲清了「模型能不能跑在端上、怎么配置、怎么算内存、端云怎么分工」。这一篇只解决一个问题：**把模型真正塞进 iPhone App，到底难在哪、怎么写**。
 >
-> 写法上我换了个路子：不先甩清单和表格，而是从一个会翻车的场景开场，把「本地模型」类比成你最熟的「解码器」。这样很多坑你其实早就踩过。
+> 写法上我换了个路子：不先甩清单和表格，而是从一个会翻车的场景开场，把「本地模型」类比成最熟的「解码器」。很多坑其实早就踩过。
 
 ## 开场：地铁里没网，用户问了个问题
 
 想象一个场景。
 
-用户进地铁，过隧道，没信号。他打开你的 App，问了一句：「帮我总结这段聊天记录」。云端调不了——没网。但你早有准备：你把一个小模型塞进了 App，离线也能答。
+设想进地铁、过隧道，没信号。他打开 App，问了句：「帮我总结这段聊天记录」。云端调不了——没网。但提前塞了个小模型：把一个模型塞进了 App，离线也能答。
 
 听起来很美。但真到这一步，麻烦才刚开始：
 
-- 模型文件 2GB，**手机内存本来就紧**，加载时系统可能直接把你进程杀掉（iOS 的 Jetsam）；
+- 模型文件 2GB，**手机内存本来就紧**，加载时进程会被系统直接杀掉（iOS 的 Jetsam）；
 - 推理很**烫**，烫到触发温控降频，越跑越慢；
-- 用户点了一下「不想等了」，**你得立刻停**，不能嘴上停了后台还在跑、内存还在涨；
+- 用户点了一下「不想等了」，**必须立刻停**，不能嘴上停了后台还在跑、内存还在涨；
 - 切到后台再回来，**不能崩**，渲染目标不能乱。
 
-如果你做过播放器，会发现这每一个坑都眼熟：**解码器占内存、解码发热、要能暂停/seek、前后台要管好渲染目标**。
+做过播放器的，会发现这每个坑都眼熟：**解码器占内存、解码发热、要能暂停/seek、前后台要管好渲染目标**。
 
-所以先给一句话定调：**把本地模型塞进 App，本质就是「把一个解码器塞进 App」**。后面所有写法，我都用这个类比来讲——你会轻松很多。
+所以先定个调：**把本地模型塞进 App，就是「把一个解码器塞进 App」**。后面所有写法，我都用这个类比来讲。
 
 ## 第一步：把 C 库变成 Swift 能调的东西
 
-llama.cpp 是个 **C 写的库**。Swift 不能直接 `import` 一个 C 工程，得先把它编译成 iOS 能用的形式，再告诉 Swift「这堆 C 函数你可以调了」。
+llama.cpp 是个 **C 写的库**。Swift 不能直接 `import` 一个 C 工程，得先把它编译成 iOS 能用的形式，再告诉 Swift「这堆 C 函数可以调了」。
 
 坑在哪？两个：
 
@@ -53,7 +53,7 @@ cmake --build build-ios
 #include "llama.h"
 ```
 
-到这步，Swift 里就能直接调用 `llama_*` 那一堆 C 函数了。类比：**这等于你把「解码器」的接口导进了 App**。
+到这步，Swift 里就能直接调用 `llama_*` 那一堆 C 函数了。类比：**这等于把「解码器」的接口导进了 App**。
 
 ## 第二步：包一个 LocalLLM 类——就是「建解码器 + 解码循环」
 
@@ -66,7 +66,7 @@ cmake --build build-ios
 - **KV cache** = 已经解码过的帧缓冲，不用每帧重算；
 - **流式回调** = 边生成边把文字抛给 UI，像边解码边渲染。
 
-代码骨架（基于 llama.cpp 现代 C API；**具体函数签名以你集成的 `llama.h` 版本为准**）：
+代码骨架（基于 llama.cpp 现代 C API；**具体函数签名以当前集成的 `llama.h` 版本为准**）：
 
 ```swift
 import Foundation
@@ -178,7 +178,7 @@ final class LocalLLM {
 }
 ```
 
-读这段代码时，把它当成「解码器管理器」就不绕了：`load`=建实例、`generate`=解码循环、`onToken`=逐帧上屏、`deinit`=销毁。
+这段代码当成「解码器管理器」就不绕了：`load`=建实例、`generate`=解码循环、`onToken`=逐帧上屏、`deinit`=销毁。
 
 ### 采样器：四个旋钮决定输出性格
 
@@ -186,7 +186,7 @@ final class LocalLLM {
 
 先把根上讲透：LLM 生成是一个词一个词往外蹦的循环（代码里的 `while` 就是）。每一步，模型不是直接吐「下一个词」，而是给一张**「词汇表里每个词概率多少」的清单**。光有清单不够——到底抽哪个？这就是采样参数管的。
 
-类比点菜：模型递给你一张带概率的菜单（鱼香肉丝 40%、宫保鸡丁 30%……），这四个旋钮就是点菜规则：
+类比点菜：模型递上一张带概率的菜单（鱼香肉丝 40%、宫保鸡丁 30%……），这四个旋钮就是点菜规则：
 
 - **温度 temperature｜胆子大小**：softmax 前先除的数。`→0` 把概率差异放大、分布变尖，几乎只点最高概率那道菜 → 输出确定、保守、易重复；`0.7~1.0+` 把差异抹平、冷门菜也能上 → 更有创意、但易跑题。`temp=0` 时分布退化成「永远选第一」。
 - **top_k｜候选池天花板**：只从概率最高的 k 个词里挑，其余直接扔，挡掉长尾荒谬词。`k=1` 就是纯贪心。
@@ -216,7 +216,7 @@ Task.detached(priority: .userInitiated) {
 ```
 
 **2）内存是真的会爆——老机型尤其**  
-模型权重 + KV cache 是真金白银占内存，不是磁盘大小。（一）里那个「权重 + KV 公式」不是摆设：算下来超出机型可用内存，系统直接 Jetsam 杀你。这就跟播放器解码内存峰值一样，必须按机型分级——高频入口常驻一个实例复用，低频能力懒加载。
+模型权重 + KV cache 是真金白银占内存，不是磁盘大小。（一）里那个「权重 + KV 公式」不是摆设：算下来超出机型可用内存，系统直接 Jetsam 杀进程。这就跟播放器解码内存峰值一样，必须按机型分级——高频入口常驻一个实例复用，低频能力懒加载。
 
 **3）省电：能用 ANE 就别用 GPU**  
 `n_gpu_layers=99` 是让 llama.cpp 走 **Metal**。但 Apple 芯片上还有更省电的 **ANE（神经引擎）**。类比：能用硬解（VideoToolbox）就别用软解。后面会说 MLX 就是走 ANE 的。
@@ -234,7 +234,7 @@ self.output += piece   // 只 append 新到的片段
 
 ## 苹果自己的路：MLX（走 ANE，更省电）
 
-如果你的 App 是纯 Apple 生态、最在意续航，本地 LLM 在 iOS 上现在更主流的是 **MLX Swift**——Apple 官方的 ML 框架，把模型跑在 **ANE** 上，纯 Swift、流式友好：
+纯 Apple 生态、最在意续航的 App，本地 LLM 在 iOS 上现在更主流的是 **MLX Swift**——Apple 官方的 ML 框架，把模型跑在 **ANE** 上，纯 Swift、流式友好：
 
 ```swift
 import MLXLLM
@@ -256,7 +256,7 @@ for await part in model.generate(messages: messages, parameters: GenerateParamet
 - 想和安卓/桌面**共用一套 llama.cpp 逻辑** → 走 llama.cpp（上面的 `LocalLLM`）；
 - 纯 Apple、**要最省电** → 走 MLX Swift（走 ANE），Core ML 是零第三方依赖的备选。 但是现在的模型不兼容，需要做转换。 
 
-## 收口：这条线和前面怎么连
+## 这条线和前面怎么连
 
 - **模型从哪来**：（一）讲的「断点续传 / GGUF 分片 / 分层模型」下载下来的 GGUF，就是这里 `load(modelPath:)` 读的文件。分层模型 = 先下发小 GGUF 立刻能用、后台再下大 GGUF 做增强，然后换 `LocalLLM` 实例。
 - **端云协同**：`LocalLLM` 跑不动（机型太老 / 模型太大 / 弱网需联网知识）时，按（一）的端云分工标准回云端大模型——路由逻辑不变。
@@ -264,7 +264,7 @@ for await part in model.generate(messages: messages, parameters: GenerateParamet
 
 ## 配套 Demo：一套能直接跑的代码
 
-前面那些代码块，散着看容易「好像懂了、一跑就废」。所以我把这一篇补成了一个**完整可运行的 Demo 工程**，放在仓库 `LocalLLMDemo/` 目录（[点这里看](https://github.com/JellyGD/jellygd.github.io/tree/master/LocalLLMDemo)）。它把三个你最关心的东西都填实了：
+前面那些代码块，散着看容易「好像懂了、一跑就废」。所以我把这一篇补成了一个**完整可运行的 Demo 工程**，放在仓库 `LocalLLMDemo/` 目录（[点这里看](https://github.com/JellyGD/jellygd.github.io/tree/master/LocalLLMDemo)）。它把最关心的三个东西都填实了：
 
 - **XCFramework 集成**：`build-llama-xcframework.sh` 一条命令把 llama.cpp 编成 `llama.xcframework`（真机 `arm64` + 模拟器 `arm64/x86_64`，开了 `LLAMA_METAL=ON`）；README 里写了怎么拖进 Xcode、「Embed & Sign」、设 Bridging Header。这就把「解码器的接口导进 App」那一步彻底落地。
 - **下载管理器**：`ModelDownloader` 用 `URLSessionDownloadTask` 做**断点续传**——暂停/退出时存 `resumeData`，恢复时接着下；还处理了 iOS 那个「resumeData 偶尔失效」的坑（失效就从头下，不打崩）。这正是实战（一）说的「断点续传必须有」的代码版。
@@ -272,7 +272,7 @@ for await part in model.generate(messages: messages, parameters: GenerateParamet
 
 工程里 `LocalLLM` 就是上面那套「解码器」封装的完整版（多了取消句柄 `GenerateHandle`，对应播放器的暂停）；`ModelCatalog` 给了两个分层模型示例，`ModelStore` 管落盘。想直接拿来改，照 README 三步就能 Run。
 
-> ⚠️ 两点实话：① llama.cpp 的 C API 跨版本有微调，**编译前请以你拉取的 `llama.h` 为准**（Demo 里已标注）；② llama.cpp 默认走 **Metal/GPU**，不是 ANE——要最省电走 ANE 请用 MLX（见上）。
+> ⚠️ 两点实话：① llama.cpp 的 C API 跨版本有微调，**编译前请以拉取的 `llama.h` 为准**（Demo 里已标注）；② llama.cpp 默认走 **Metal/GPU**，不是 ANE——要最省电走 ANE 请用 MLX（见上）。
 
 ## 下一篇
 
