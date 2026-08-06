@@ -12,3 +12,6 @@ _site/
 
 # Bundler 锁文件（由 CI 的 bundler-cache 重新生成）
 Gemfile.lock
+
+# SwiftPM 构建产物（AgentToolDemo 本地构建缓存，不提交）
+AgentToolDemo/.build/
