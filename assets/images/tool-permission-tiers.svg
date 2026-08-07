@@ -1,0 +1,35 @@
+<svg viewBox="0 0 680 360" width="100%" role="img">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <title>端侧权限分级与端侧否决权</title>
+  <desc>按风险分三档权限，外加端侧否决权</desc>
+
+  <rect x="40" y="36" width="600" height="300" rx="20" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="68" y="66" font-family="sans-serif" font-size="14" font-weight="500" fill="#26215C">端侧权限管理：风险分级 + 端侧否决权</text>
+
+  <g>
+    <rect x="64" y="84" width="552" height="54" rx="10" fill="#EAF3DE" stroke="#639922" stroke-width="0.5"/>
+    <text x="84" y="106" font-family="sans-serif" font-size="13" font-weight="500" fill="#27500A">自动执行</text>
+    <text x="84" y="128" font-family="sans-serif" font-size="12" fill="#3B6D11">读本地状态、展示型渲染 — 无副作用，端侧自决，不打扰用户</text>
+  </g>
+
+  <g>
+    <rect x="64" y="150" width="552" height="54" rx="10" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text x="84" y="172" font-family="sans-serif" font-size="13" font-weight="500" fill="#633806">需确认</text>
+    <text x="84" y="194" font-family="sans-serif" font-size="12" fill="#854F0B">写本地数据（建提醒 / 通知）— 执行前弹确认，可撤销</text>
+  </g>
+
+  <g>
+    <rect x="64" y="216" width="552" height="54" rx="10" fill="#FCEBEB" stroke="#E24B4A" stroke-width="0.5"/>
+    <text x="84" y="238" font-family="sans-serif" font-size="13" font-weight="500" fill="#791F1F">显式授权 / 禁止</text>
+    <text x="84" y="260" font-family="sans-serif" font-size="12" fill="#A32D2D">发消息 · 扣费 · 删数据 · 上传隐私 — 一次性授权，或端侧直接禁止</text>
+  </g>
+
+  <g>
+    <rect x="64" y="284" width="552" height="40" rx="10" fill="#CECBF6" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="84" y="308" font-family="sans-serif" font-size="12" fill="#26215C">端侧否决权：云端下发的 tool 意图，端侧按本地策略最终裁决，不合规直接拦下回灌“无权限”</text>
+  </g>
+</svg>

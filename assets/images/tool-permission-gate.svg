@@ -1,0 +1,43 @@
+<svg viewBox="0 0 680 420" width="100%" role="img">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <title>权限闸门决策流</title>
+  <desc>声明画像之上叠加运行时上下文做最终裁决</desc>
+
+  <g>
+    <rect x="100" y="40" width="480" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="340" y="62" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#26215C">取声明画像</text>
+    <text x="340" y="82" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#3C3489">default tier · scope · data category</text>
+  </g>
+  <path d="M340 96 L340 116" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="100" y="116" width="480" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="340" y="138" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#26215C">执行目标 + 敏感数据</text>
+    <text x="340" y="158" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#3C3489">local-only 走云 / 触 health·pii 走云 → 拦截</text>
+  </g>
+  <path d="M340 172 L340 192" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="100" y="192" width="480" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="340" y="214" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#26215C">查用户授权状态</text>
+    <text x="340" y="234" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#3C3489">已授予且覆盖上下文 → 放行（会话级 / 永久）</text>
+  </g>
+  <path d="M340 248 L340 268" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="100" y="268" width="480" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="340" y="290" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#26215C">原生门控 + 频率护栏</text>
+    <text x="340" y="310" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#3C3489">未授权 / 超频 → 阻断或转 confirm</text>
+  </g>
+  <path d="M340 324 L340 344" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="100" y="344" width="480" height="56" rx="10" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text x="340" y="366" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#633806">按 tier 终裁</text>
+    <text x="340" y="386" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#854F0B">auto 放行 · confirm 弹确认 · explicit 显式授权</text>
+  </g>
+</svg>

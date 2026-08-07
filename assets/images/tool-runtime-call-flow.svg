@@ -1,0 +1,53 @@
+<svg viewBox="0 0 680 460" width="100%" role="img">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <title>端侧 Tool 运行时调用流</title>
+  <desc>从模型吐出 tool_call 到执行回灌的完整运行时序列，含权限闸门</desc>
+
+  <g>
+    <rect x="160" y="40" width="360" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="340" y="62" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#26215C">模型吐 tool_call</text>
+    <text x="340" y="82" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#3C3489">流式 delta.tool_calls（name + arguments 分片）</text>
+  </g>
+  <path d="M340 96 L340 124" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="160" y="124" width="360" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="340" y="146" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#26215C">AgentLoop 按 index 累积</text>
+    <text x="340" y="166" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#3C3489">流结束才 JSON.parse，index 非法直接丢</text>
+  </g>
+  <path d="M340 180 L340 208" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="160" y="208" width="360" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="340" y="230" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#26215C">查 ToolRegistry</text>
+    <text x="340" y="250" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#3C3489">name → 定义；查不到回灌报错换一个</text>
+  </g>
+  <path d="M340 264 L340 292" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="160" y="292" width="360" height="56" rx="10" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text x="340" y="314" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#633806">权限闸门</text>
+    <text x="340" y="334" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#854F0B">分级判定 + 端侧否决 + 参数强校验</text>
+  </g>
+  <path d="M340 348 L340 376" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="160" y="376" width="360" height="56" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
+    <text x="340" y="398" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#04342C">执行 Tool</text>
+    <text x="340" y="418" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#085041">本地代码直跑 / 经 MCP 到云端 Server</text>
+  </g>
+
+  <path d="M160 404 L80 404 L80 152 L160 152" fill="none" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="84" y="430" font-family="sans-serif" font-size="12" fill="#444441">回灌 role:tool，继续循环</text>
+
+  <path d="M520 404 L540 404" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="540" y="376" width="120" height="56" rx="10" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+    <text x="600" y="398" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#2C2C2A">finish_reason</text>
+    <text x="600" y="418" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" font-weight="500" fill="#2C2C2A">= stop → 输出</text>
+  </g>
+</svg>
